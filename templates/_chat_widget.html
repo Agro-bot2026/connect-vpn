@@ -1,0 +1,141 @@
+<!-- ────────── CHAT WIDGET CONNECTVPN ────────── -->
+<style>
+  .cvpn-chat-btn{position:fixed;bottom:20px;right:20px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#00ff9d,#00f2ff);border:none;cursor:pointer;box-shadow:0 0 20px rgba(0,255,157,0.5),0 4px 12px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#030608;z-index:9998;transition:transform 0.2s;}
+  .cvpn-chat-btn:hover{transform:scale(1.08);}
+  .cvpn-chat-btn .badge-dot{position:absolute;top:8px;right:8px;width:10px;height:10px;background:#ff4757;border-radius:50%;border:2px solid #030608;display:none;}
+  .cvpn-chat-window{position:fixed;bottom:90px;right:20px;width:360px;max-width:calc(100vw - 40px);height:520px;max-height:calc(100vh - 120px);background:rgba(8,13,16,0.95);border:1px solid rgba(0,255,157,0.3);border-radius:16px;backdrop-filter:blur(16px);box-shadow:0 0 40px rgba(0,255,157,0.15),0 20px 60px rgba(0,0,0,0.6);display:none;flex-direction:column;overflow:hidden;z-index:9999;font-family:'Syne',sans-serif;}
+  .cvpn-chat-window.open{display:flex;animation:cvpnFadeIn 0.25s ease;}
+  @keyframes cvpnFadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  .cvpn-chat-header{background:linear-gradient(90deg,rgba(0,255,157,0.15),rgba(0,242,255,0.1));border-bottom:1px solid rgba(0,255,157,0.2);padding:0.9rem 1rem;display:flex;align-items:center;justify-content:space-between;}
+  .cvpn-chat-title{display:flex;align-items:center;gap:0.6rem;color:#e0f0f5;font-weight:700;font-size:0.95rem;}
+  .cvpn-chat-title .dot{width:8px;height:8px;border-radius:50%;background:#00ff9d;box-shadow:0 0 8px #00ff9d;animation:cvpnPulse 2s infinite;}
+  @keyframes cvpnPulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+  .cvpn-chat-close{background:none;border:none;color:#5a7a85;cursor:pointer;font-size:1.3rem;padding:0.2rem;line-height:1;}
+  .cvpn-chat-close:hover{color:#ff6b6b;}
+  .cvpn-chat-body{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.7rem;}
+  .cvpn-chat-body::-webkit-scrollbar{width:6px;}
+  .cvpn-chat-body::-webkit-scrollbar-thumb{background:rgba(0,255,157,0.2);border-radius:3px;}
+  .cvpn-msg{max-width:85%;padding:0.7rem 0.9rem;border-radius:12px;font-size:0.88rem;line-height:1.45;word-wrap:break-word;animation:cvpnMsgIn 0.2s ease;}
+  @keyframes cvpnMsgIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+  .cvpn-msg.user{background:linear-gradient(135deg,rgba(0,242,255,0.15),rgba(0,242,255,0.05));border:1px solid rgba(0,242,255,0.25);color:#e0f0f5;align-self:flex-end;border-bottom-right-radius:4px;}
+  .cvpn-msg.bot{background:rgba(255,255,255,0.04);border:1px solid rgba(0,255,157,0.15);color:#e0f0f5;align-self:flex-start;border-bottom-left-radius:4px;}
+  .cvpn-msg.bot.typing{color:#5a7a85;font-style:italic;}
+  .cvpn-msg.error{background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.3);color:#ff6b6b;align-self:flex-start;}
+  .cvpn-chat-input{border-top:1px solid rgba(0,255,157,0.15);padding:0.7rem;display:flex;gap:0.5rem;background:rgba(0,0,0,0.3);}
+  .cvpn-chat-input textarea{flex:1;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:0.6rem 0.8rem;color:#e0f0f5;font-family:'Space Mono',monospace;font-size:0.85rem;resize:none;height:42px;max-height:100px;}
+  .cvpn-chat-input textarea:focus{outline:none;border-color:#00ff9d;}
+  .cvpn-chat-input button{background:linear-gradient(135deg,#00ff9d,#00f2ff);border:none;border-radius:8px;width:42px;height:42px;cursor:pointer;font-size:1.1rem;color:#030608;flex-shrink:0;transition:transform 0.15s;}
+  .cvpn-chat-input button:hover:not(:disabled){transform:scale(1.05);}
+  .cvpn-chat-input button:disabled{opacity:0.4;cursor:not-allowed;}
+  .cvpn-chat-tip{text-align:center;color:#5a7a85;font-size:0.7rem;padding:0.4rem;font-family:'Space Mono',monospace;background:rgba(0,0,0,0.2);}
+</style>
+
+<button class="cvpn-chat-btn" id="cvpnChatBtn" aria-label="Abrir chat">
+  <i class="bi bi-chat-dots-fill"></i>
+  <span class="badge-dot" id="cvpnBadgeDot"></span>
+</button>
+
+<div class="cvpn-chat-window" id="cvpnChatWindow">
+  <div class="cvpn-chat-header">
+    <div class="cvpn-chat-title"><span class="dot"></span> Asistente ConnectVPN</div>
+    <button class="cvpn-chat-close" id="cvpnChatClose" aria-label="Cerrar">×</button>
+  </div>
+  <div class="cvpn-chat-body" id="cvpnChatBody"></div>
+  <div class="cvpn-chat-input">
+    <textarea id="cvpnChatInput" placeholder="Escribí tu pregunta..." rows="1"></textarea>
+    <button id="cvpnChatSend" title="Enviar"><i class="bi bi-send-fill"></i></button>
+  </div>
+  <div class="cvpn-chat-tip">⚡ IA · No es Charly · Para casos complejos te derivamos a él</div>
+</div>
+
+<script>
+(function(){
+  const btn = document.getElementById('cvpnChatBtn');
+  const win = document.getElementById('cvpnChatWindow');
+  const closeBtn = document.getElementById('cvpnChatClose');
+  const body = document.getElementById('cvpnChatBody');
+  const input = document.getElementById('cvpnChatInput');
+  const sendBtn = document.getElementById('cvpnChatSend');
+  let history = [];
+  let isOpen = false;
+  let isLoading = false;
+
+  function addMsg(content, role, isError) {
+    const div = document.createElement('div');
+    div.className = 'cvpn-msg ' + (role === 'user' ? 'user' : 'bot') + (isError ? ' error' : '');
+    div.textContent = content;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+    return div;
+  }
+
+  function welcomeMsg() {
+    if (body.children.length === 0) {
+      addMsg('¡Hola! 👋 Soy el asistente virtual de ConnectVPN. Puedo ayudarte con dudas sobre tu cuenta, vencimientos, renovaciones o configuración básica. ¿En qué te puedo ayudar?', 'bot');
+    }
+  }
+
+  function toggleChat() {
+    isOpen = !isOpen;
+    win.classList.toggle('open', isOpen);
+    btn.style.display = isOpen ? 'none' : 'flex';
+    if (isOpen) {
+      welcomeMsg();
+      setTimeout(() => input.focus(), 200);
+    }
+  }
+
+  async function sendMessage() {
+    const msg = input.value.trim();
+    if (!msg || isLoading) return;
+    isLoading = true;
+    sendBtn.disabled = true;
+    input.value = '';
+    input.style.height = '42px';
+
+    addMsg(msg, 'user');
+    const typing = addMsg('escribiendo...', 'bot');
+    typing.classList.add('typing');
+
+    try {
+      const res = await fetch('/chatbot/message', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ message: msg, history: history })
+      });
+      const data = await res.json();
+      typing.remove();
+
+      if (data.reply) {
+        addMsg(data.reply, 'bot');
+        history.push({role:'user', content: msg});
+        history.push({role:'assistant', content: data.reply});
+        if (history.length > 12) history = history.slice(-12);
+      } else {
+        addMsg(data.error || 'No pude procesar tu mensaje. Probá de nuevo.', 'bot', true);
+      }
+    } catch (e) {
+      typing.remove();
+      addMsg('Error de conexión. Verificá tu internet y probá de nuevo.', 'bot', true);
+    }
+    isLoading = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+
+  btn.addEventListener('click', toggleChat);
+  closeBtn.addEventListener('click', toggleChat);
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+  input.addEventListener('input', () => {
+    input.style.height = '42px';
+    input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+  });
+})();
+</script>
+<!-- ────────── FIN CHAT WIDGET ────────── -->

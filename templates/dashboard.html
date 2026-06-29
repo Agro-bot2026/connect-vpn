@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — ConnectVPN</title>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W19ML4HVY"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5W19ML4HVY');</script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4478373683231277" crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    /* ConnectVPN — Dashboard — Cyberpunk Terminal */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #030608; --bg2: #060d12; --bg3: #0a1520;
+      --green: #00ff9d; --blue: #00f2ff;
+      --green-dim: rgba(0,255,157,0.15); --blue-dim: rgba(0,242,255,0.12);
+      --text: #dde6ee; --text-muted: #6b7f8f;
+      --error: #ff4d6d; --success: #00ff9d;
+      --warn: #ffb347;
+      --glass: rgba(255,255,255,0.03); --glass-border: rgba(0,255,157,0.18);
+      --radius: 12px; --font-ui: 'Syne', sans-serif; --font-mono: 'Space Mono', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-ui); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+    body::before { content:''; position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px); pointer-events:none; z-index:9999; }
+    #particles-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+    /* TOPBAR */
+    .topbar { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0.9rem 2rem; background:rgba(3,6,8,0.95); backdrop-filter:blur(16px); border-bottom:1px solid rgba(0,255,157,0.1); }
+    .topbar-brand { display:flex; align-items:center; gap:0.6rem; text-decoration:none; font-family:var(--font-mono); font-weight:700; font-size:1.15rem; color:var(--green); letter-spacing:0.05em; }
+    .brand-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--green),var(--blue)); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.95rem; color:#030608; }
+    .topbar-right { display:flex; align-items:center; gap:1.2rem; }
+    .user-chip { display:flex; align-items:center; gap:0.5rem; background:var(--glass); border:1px solid var(--glass-border); border-radius:8px; padding:0.4rem 0.9rem; font-family:var(--font-mono); font-size:0.8rem; color:var(--text-muted); }
+    .user-chip i { color:var(--green); }
+    .logout-btn { display:flex; align-items:center; gap:0.4rem; color:var(--text-muted); text-decoration:none; font-size:0.85rem; font-weight:600; transition:color 0.2s; background:none; border:none; cursor:pointer; font-family:var(--font-ui); }
+    .logout-btn:hover { color:var(--error); }
+
+    /* MAIN */
+    .dash-main { flex:1; position:relative; z-index:1; padding:5.5rem 2rem 3rem; max-width:1100px; margin:0 auto; width:100%; }
+
+    /* PAGE HEADER */
+    .dash-header { margin-bottom:2rem; }
+    .dash-greeting { font-size:0.78rem; font-family:var(--font-mono); letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.4rem; }
+    .dash-title { font-size:1.8rem; font-weight:800; color:#fff; }
+    .dash-title span { color:var(--green); }
+
+    /* STATUS BADGE */
+    .status-badge { display:inline-flex; align-items:center; gap:0.5rem; padding:0.35rem 0.9rem; border-radius:6px; font-family:var(--font-mono); font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-top:0.6rem; }
+    .status-active { background:rgba(0,255,157,0.12); border:1px solid rgba(0,255,157,0.35); color:var(--green); }
+    .status-expired { background:rgba(255,77,109,0.12); border:1px solid rgba(255,77,109,0.35); color:var(--error); }
+    .status-dot { width:7px; height:7px; border-radius:50%; }
+    .status-active .status-dot { background:var(--green); box-shadow:0 0 6px var(--green); animation:pulse 2s infinite; }
+    .status-expired .status-dot { background:var(--error); }
+    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.4;} }
+
+    /* ALERTS */
+    .dash-alert { border-radius:10px; padding:0.9rem 1.2rem; font-size:0.9rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.7rem; }
+    .alert-warn { background:rgba(255,179,71,0.1); border:1px solid rgba(255,179,71,0.35); color:var(--warn); }
+    .alert-error { background:rgba(255,77,109,0.1); border:1px solid rgba(255,77,109,0.3); color:var(--error); }
+    .alert-success { background:rgba(0,255,157,0.08); border:1px solid rgba(0,255,157,0.3); color:var(--green); }
+
+    /* GRID */
+    .dash-grid { display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+    .dash-grid-3 { display:grid; grid-template-columns: repeat(3, 1fr); gap:1.5rem; margin-bottom:1.5rem; }
+
+    /* GLASS CARD */
+    .glass-card { background:var(--glass); border:1px solid var(--glass-border); border-radius:var(--radius); backdrop-filter:blur(12px); padding:1.8rem; position:relative; overflow:hidden; transition:border-color 0.3s,box-shadow 0.3s; }
+    .glass-card:hover { border-color:rgba(0,255,157,0.3); box-shadow:0 0 24px rgba(0,255,157,0.06),0 8px 32px rgba(0,0,0,0.3); }
+    .glass-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--green),var(--blue)); opacity:0.6; }
+
+    /* CARD HEADER */
+    .card-label { font-size:0.72rem; font-family:var(--font-mono); letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.8rem; display:flex; align-items:center; gap:0.5rem; }
+    .card-label i { color:var(--green); }
+
+    /* CREDENTIAL ROW */
+    .cred-row { display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem; }
+    .cred-row:last-child { margin-bottom:0; }
+    .cred-label { font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; min-width:90px; }
+    .cred-value { font-family:var(--font-mono); font-size:0.95rem; color:#fff; font-weight:700; flex:1; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.07); border-radius:6px; padding:0.5rem 0.8rem; letter-spacing:0.05em; }
+    .cred-value.password { letter-spacing:0.2em; }
+    .copy-btn { background:rgba(0,255,157,0.08); border:1px solid rgba(0,255,157,0.2); border-radius:6px; color:var(--green); padding:0.5rem 0.7rem; cursor:pointer; font-size:0.9rem; transition:background 0.2s,box-shadow 0.2s; flex-shrink:0; }
+    .copy-btn:hover { background:rgba(0,255,157,0.18); box-shadow:0 0 12px rgba(0,255,157,0.2); }
+    .copy-btn.copied { color:var(--blue); border-color:rgba(0,242,255,0.3); }
+    .show-pass-btn { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:var(--text-muted); padding:0.5rem 0.7rem; cursor:pointer; font-size:0.9rem; transition:color 0.2s; flex-shrink:0; }
+    .show-pass-btn:hover { color:var(--green); }
+
+    /* PROGRESS CARD */
+    .days-number { font-family:var(--font-mono); font-size:3rem; font-weight:700; line-height:1; margin-bottom:0.3rem; }
+    .days-label { font-size:0.8rem; color:var(--text-muted); margin-bottom:1.2rem; }
+    .progress-bar-wrap { background:rgba(255,255,255,0.06); border-radius:4px; height:8px; overflow:hidden; margin-bottom:0.5rem; }
+    .progress-bar-fill { height:100%; border-radius:4px; transition:width 1.2s ease; background:linear-gradient(90deg,var(--green),var(--blue)); }
+    .progress-bar-fill.warn { background:linear-gradient(90deg,var(--warn),var(--error)); }
+    .progress-meta { display:flex; justify-content:space-between; font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); }
+
+    /* STAT MINI CARDS */
+    .stat-card { text-align:center; padding:1.5rem; }
+    .stat-icon { font-size:1.6rem; margin-bottom:0.7rem; }
+    .stat-icon.green { color:var(--green); }
+    .stat-icon.blue { color:var(--blue); }
+    .stat-value { font-family:var(--font-mono); font-size:1.4rem; font-weight:700; color:#fff; margin-bottom:0.2rem; }
+    .stat-label { font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; }
+
+    /* BUTTONS */
+    .btn-primary { display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(90deg,var(--green),var(--blue)); color:#030608; font-family:var(--font-mono); font-weight:700; font-size:0.88rem; letter-spacing:0.06em; padding:0.8rem 1.8rem; border-radius:8px; text-decoration:none; border:none; cursor:pointer; transition:transform 0.15s,box-shadow 0.2s; }
+    .btn-primary:hover { transform:scale(1.03); box-shadow:0 0 24px rgba(0,255,157,0.4); }
+    .btn-primary:active { transform:scale(0.97); }
+    .btn-outline { display:inline-flex; align-items:center; gap:0.5rem; background:transparent; color:var(--blue); font-family:var(--font-mono); font-weight:700; font-size:0.88rem; letter-spacing:0.05em; padding:0.8rem 1.8rem; border-radius:8px; text-decoration:none; border:1px solid rgba(0,242,255,0.35); cursor:pointer; transition:background 0.2s,box-shadow 0.2s; }
+    .btn-outline:hover { background:rgba(0,242,255,0.08); box-shadow:0 0 16px rgba(0,242,255,0.2); }
+
+    /* RENEW SECTION */
+    .renew-section { margin-top:1.5rem; }
+    .renew-card { background:linear-gradient(135deg,rgba(0,255,157,0.06),rgba(0,242,255,0.04)); border:1px solid rgba(0,255,157,0.25); border-radius:var(--radius); padding:1.8rem; display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap; }
+    .renew-info { flex:1; }
+    .renew-title { font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:0.4rem; }
+    .renew-desc { font-size:0.88rem; color:var(--text-muted); line-height:1.5; }
+    .renew-price { font-family:var(--font-mono); font-size:1.4rem; font-weight:700; color:var(--green); margin-top:0.5rem; }
+
+    /* COPY TOAST */
+    .copy-toast { position:fixed; bottom:2rem; right:2rem; background:rgba(0,255,157,0.15); border:1px solid rgba(0,255,157,0.4); color:var(--green); font-family:var(--font-mono); font-size:0.82rem; padding:0.6rem 1.2rem; border-radius:8px; z-index:1000; opacity:0; transform:translateY(10px); transition:opacity 0.3s,transform 0.3s; pointer-events:none; }
+    .copy-toast.show { opacity:1; transform:translateY(0); }
+
+    /* FOOTER */
+    footer { position:relative; z-index:1; background:var(--bg); border-top:1px solid rgba(0,255,157,0.06); padding:1.5rem 2rem; text-align:center; }
+    .footer-copy { font-size:0.78rem; color:var(--text-muted); font-family:var(--font-mono); }
+
+    /* FADE IN */
+    .fade-in-up { opacity:0; transform:translateY(20px); transition:opacity 0.5s ease,transform 0.5s ease; }
+    .fade-in-up.visible { opacity:1; transform:translateY(0); }
+
+    @media (max-width:900px) {
+      .dash-grid { grid-template-columns:1fr; }
+      .dash-grid-3 { grid-template-columns:1fr 1fr; }
+      .topbar { padding:0.9rem 1.2rem; }
+    }
+    @media (max-width:600px) {
+      .dash-main { padding:5rem 1rem 2rem; }
+      .dash-grid-3 { grid-template-columns:1fr; }
+      .renew-card { flex-direction:column; }
+      .cred-row { flex-wrap:wrap; }
+      .cred-value { min-width:0; width:100%; }
+    }
+  </style>
+  {% include "_seo_head.html" %}
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="/" class="topbar-brand">
+    <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+    ConnectVPN
+  </a>
+  <div class="topbar-right">
+    <div class="user-chip">
+      <i class="bi bi-person-circle"></i>
+      {{ user.nombre if user else 'Usuario' }}
+    </div>
+    <a href="/logout" class="logout-btn">
+      <i class="bi bi-box-arrow-right"></i>
+      Salir
+    </a>
+  </div>
+</header>
+
+<!-- MAIN DASHBOARD -->
+<main class="dash-main">
+
+  <!-- HEADER -->
+  <div class="dash-header fade-in-up">
+    <div class="dash-greeting">// panel de control</div>
+    <h1 class="dash-title">Bienvenido, <span>{{ user.nombre if user else 'Usuario' }}</span></h1>
+    {% if not cuenta or cuenta.activa %}
+    <div class="status-badge status-active">
+      <div class="status-dot"></div>
+      Cuenta activa
+    </div>
+    {% else %}
+    <div class="status-badge status-expired">
+      <div class="status-dot"></div>
+      Cuenta vencida
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ALERT: pocos días restantes -->
+  {% if cuenta and cuenta.dias_restantes is defined and cuenta.dias_restantes <= 5 and cuenta.dias_restantes > 0 %}
+  <div class="dash-alert alert-warn fade-in-up">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <div>Tu cuenta vence en <strong>{{ cuenta.dias_restantes }} día{{ 's' if cuenta.dias_restantes != 1 }}</strong>. Renová ahora para no perder el acceso.</div>
+  </div>
+  {% endif %}
+
+  {% if cuenta and cuenta.dias_restantes is defined and cuenta.dias_restantes <= 0 %}
+  <div class="dash-alert alert-error fade-in-up">
+    <i class="bi bi-x-circle-fill"></i>
+    <div>Tu cuenta ha <strong>vencido</strong>. Renová para recuperar el acceso SSH.</div>
+  </div>
+  {% endif %}
+
+  {% if error %}
+  <div class="dash-alert alert-error fade-in-up">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    {{ error }}
+  </div>
+  {% endif %}
+
+  {% if success %}
+  <div class="dash-alert alert-success fade-in-up">
+    <i class="bi bi-check-circle-fill"></i>
+    {{ success }}
+  </div>
+  {% endif %}
+
+  <!-- MINI STATS -->
+  <div class="dash-grid-3 fade-in-up" style="transition-delay:0.05s">
+    <div class="glass-card stat-card">
+      <div class="stat-icon green"><i class="bi bi-calendar-check-fill"></i></div>
+      <div class="stat-value">{{ cuenta.dias_restantes if cuenta else '—' }}</div>
+      <div class="stat-label">Días restantes</div>
+    </div>
+    <div class="glass-card stat-card">
+      <div class="stat-icon blue"><i class="bi bi-hdd-network-fill"></i></div>
+      <div class="stat-value">{{ cuenta.ip if cuenta else '—' }}</div>
+      <div class="stat-label">IP del servidor</div>
+    </div>
+    <div class="glass-card stat-card">
+      <div class="stat-icon green"><i class="bi bi-plug-fill"></i></div>
+      <div class="stat-value">80</div>
+      <div class="stat-label">Puerto SSH</div>
+    </div>
+  </div>
+
+  <!-- CREDENTIALS + PROGRESS -->
+  <div class="dash-grid fade-in-up" style="transition-delay:0.1s">
+
+    <!-- CREDENTIALS CARD -->
+    <div class="glass-card">
+      <div class="card-label"><i class="bi bi-terminal-fill"></i> Credenciales SSH</div>
+
+      <div class="cred-row">
+        <span class="cred-label">Usuario</span>
+        <span class="cred-value" id="ssh-user">{{ cuenta.usuario_ssh if cuenta else '—' }}</span>
+        <button class="copy-btn" onclick="copyText('ssh-user', this)" title="Copiar usuario">
+          <i class="bi bi-clipboard"></i>
+        </button>
+      </div>
+
+      <div class="cred-row">
+        <span class="cred-label">Contraseña</span>
+        <span class="cred-value password" id="ssh-pass" data-real="{{ cuenta.password_ssh if cuenta else '—' }}">••••••••••••</span>
+        <button class="show-pass-btn" onclick="togglePassword(this)" title="Mostrar contraseña">
+          <i class="bi bi-eye-fill"></i>
+        </button>
+        <button class="copy-btn" onclick="copyText('ssh-pass', this)" title="Copiar contraseña">
+          <i class="bi bi-clipboard"></i>
+        </button>
+      </div>
+
+      <div class="cred-row">
+        <span class="cred-label">Servidor IP</span>
+        <span class="cred-value" id="ssh-ip">{{ cuenta.ip if cuenta else '—' }}</span>
+        <button class="copy-btn" onclick="copyText('ssh-ip', this)" title="Copiar IP">
+          <i class="bi bi-clipboard"></i>
+        </button>
+      </div>
+
+      <div class="cred-row">
+        <span class="cred-label">Puerto</span>
+        <span class="cred-value" id="ssh-port">80</span>
+        <button class="copy-btn" onclick="copyText('ssh-port', this)" title="Copiar puerto">
+          <i class="bi bi-clipboard"></i>
+        </button>
+      </div>
+
+      <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,0.06);">
+        <div class="card-label" style="margin-bottom:0.6rem;"><i class="bi bi-code-slash"></i> Comando de conexión</div>
+        <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(0,255,157,0.15);border-radius:8px;padding:0.8rem 1rem;font-family:var(--font-mono);font-size:0.8rem;color:var(--green);word-break:break-all;">
+          ssh {{ cuenta.usuario_ssh if cuenta else '—' }}@{{ cuenta.ip if cuenta else '—' }} -p {{ cuenta.puerto if cuenta else '22' }}
+        </div>
+      </div>
+    </div>
+
+    <!-- DAYS / PROGRESS CARD -->
+    <div class="glass-card">
+      <div class="card-label"><i class="bi bi-hourglass-split"></i> Estado del plan</div>
+
+      {% set dias = cuenta.dias_restantes if cuenta else 30 %}
+      {% set total = 30 %}
+      {% set pct = [((dias / total) * 100)|int, 100]|min %}
+
+      <div class="days-number" style="color:{% if dias <= 5 %}var(--warn){% elif dias <= 0 %}var(--error){% else %}var(--green){% endif %}">
+        {{ dias if dias > 0 else 0 }}
+      </div>
+      <div class="days-label">días restantes de 30</div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill {% if dias <= 5 %}warn{% endif %}"
+             id="progress-fill"
+             style="width:0%"
+             data-target="{{ pct }}%">
+        </div>
+      </div>
+      <div class="progress-meta">
+        <span>0 días</span>
+        <span>{{ pct }}%</span>
+        <span>30 días</span>
+      </div>
+
+      <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,0.06);">
+        <div class="cred-row" style="margin-bottom:0.6rem;">
+          <span class="cred-label">Vencimiento</span>
+          <span style="font-family:var(--font-mono);font-size:0.88rem;color:var(--text);">{{ cuenta.fecha_vencimiento if cuenta else '—' }}</span>
+        </div>
+        <div class="cred-row">
+          <span class="cred-label">Plan</span>
+          <span style="font-family:var(--font-mono);font-size:0.88rem;color:var(--blue);">SSH {{ cuenta.dias }} días</span>
+        </div>
+      </div>
+
+      {% if dias <= 7 %}
+      <div style="margin-top:1.5rem;">
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.8rem;text-align:center;">
+          ⏰ Tu cuenta vence pronto. Renovar antes del vencimiento <strong style="color:var(--green);">suma los días que te quedan</strong>.
+        </p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:0.6rem;">
+          <a href="/pago/iniciar?dias=3" class="btn-primary" style="flex-direction:column; padding:0.7rem; font-size:0.75rem;">
+            <span style="font-size:0.65rem; opacity:0.8;">3 DÍAS</span>
+            <span style="font-size:1rem;">$1.500</span>
+          </a>
+          <a href="/pago/iniciar?dias=7" class="btn-primary" style="flex-direction:column; padding:0.7rem; font-size:0.75rem;">
+            <span style="font-size:0.65rem; opacity:0.8;">7 DÍAS</span>
+            <span style="font-size:1rem;">$3.000</span>
+          </a>
+          <a href="/pago/iniciar?dias=15" class="btn-primary" style="flex-direction:column; padding:0.7rem; font-size:0.75rem;">
+            <span style="font-size:0.65rem; opacity:0.8;">15 DÍAS</span>
+            <span style="font-size:1rem;">$5.000</span>
+          </a>
+          <a href="/pago/iniciar?dias=30" class="btn-primary" style="flex-direction:column; padding:0.7rem; font-size:0.75rem; box-shadow:0 0 15px rgba(0,255,157,0.4);">
+            <span style="font-size:0.65rem; opacity:0.8;">⭐ 30 DÍAS</span>
+            <span style="font-size:1rem;">$8.000</span>
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+    <!-- ────────── APP OFICIAL ConnectVPN ────────── -->
+  {% if cuenta %}
+  <div class="renew-section fade-in-up" style="transition-delay:0.1s">
+    <div class="renew-card" style="background:linear-gradient(135deg,rgba(0,255,157,0.08),rgba(0,242,255,0.06));border:1px solid rgba(0,255,157,0.3);">
+      <div class="renew-info" style="width:100%;">
+        <div class="renew-title">
+          <i class="bi bi-google-play" style="color:var(--green);margin-right:0.4rem;"></i>
+          Descargá nuestra app oficial
+        </div>
+        <p class="renew-desc">
+          Conexión rápida y configuración automática con tus credenciales.
+        </p>
+        <div style="background:rgba(255,180,0,0.08);border:1px solid rgba(255,180,0,0.3);border-radius:8px;padding:0.8rem;margin:1rem 0;color:#ffb400;font-size:0.85rem;display:flex;align-items:center;gap:0.6rem;">
+          <i class="bi bi-clock-history" style="font-size:1.1rem;"></i>
+          <span>Tu app está siendo autorizada por Charly. Revisá en unos minutos.</span>
+        </div>
+        <a href="https://play.google.com/store/apps/details?id=com.charlytricks.connectvpn"
+           target="_blank" rel="noopener"
+           class="btn-primary"
+           style="display:inline-flex;align-items:center;gap:0.7rem;padding:0.9rem 1.5rem;text-decoration:none;font-weight:700;">
+          <i class="bi bi-google-play" style="font-size:1.3rem;"></i>
+          Descargar desde Google Play
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <!-- ────────── FIN APP OFICIAL ────────── -->
+
+  <!-- RENEW SECTION (always visible if expired) -->
+  {% if cuenta and cuenta.dias_restantes is defined and cuenta.dias_restantes <= 0 %}
+  <div class="renew-section fade-in-up" style="transition-delay:0.15s">
+    <div class="renew-card">
+      <div class="renew-info" style="width:100%;">
+        <div class="renew-title">Renovar tu cuenta SSH</div>
+        <p class="renew-desc">Tu cuenta está vencida. Elegí un plan para recuperar el acceso de forma inmediata.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:0.8rem; margin-top:1rem;">
+          <a href="/pago/iniciar?dias=3" class="btn-primary" style="flex-direction:column; padding:0.9rem;">
+            <span style="font-size:0.7rem; opacity:0.8;">3 DÍAS</span>
+            <span style="font-size:1.1rem;">$1.500</span>
+          </a>
+          <a href="/pago/iniciar?dias=7" class="btn-primary" style="flex-direction:column; padding:0.9rem;">
+            <span style="font-size:0.7rem; opacity:0.8;">7 DÍAS</span>
+            <span style="font-size:1.1rem;">$3.000</span>
+          </a>
+          <a href="/pago/iniciar?dias=15" class="btn-primary" style="flex-direction:column; padding:0.9rem;">
+            <span style="font-size:0.7rem; opacity:0.8;">15 DÍAS</span>
+            <span style="font-size:1.1rem;">$5.000</span>
+          </a>
+          <a href="/pago/iniciar?dias=30" class="btn-primary" style="flex-direction:column; padding:0.9rem; box-shadow:0 0 18px rgba(0,255,157,0.4);">
+            <span style="font-size:0.7rem; opacity:0.8;">⭐ 30 DÍAS</span>
+            <span style="font-size:1.1rem;">$8.000</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- COMPRAR SECTION -->
+  {% if not cuenta or cuenta.dias_restantes <= 0 %}
+  <div class="renew-section fade-in-up">
+    <div class="renew-card">
+      <div class="renew-info" style="width:100%;">
+        <div class="renew-title">Comprar cuenta SSH</div>
+        <p class="renew-desc">Elegí tu plan. Activación instantánea tras el pago.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:0.8rem; margin-top:1rem;">
+          <a href="/pago/iniciar?dias=3" class="btn-primary" style="flex-direction:column; padding:0.9rem;">
+            <span style="font-size:0.7rem; opacity:0.8;">3 DÍAS</span>
+            <span style="font-size:1.1rem;">$1.500</span>
+          </a>
+          <a href="/pago/iniciar?dias=7" class="btn-primary" style="flex-direction:column; padding:0.9rem;">
+            <span style="font-size:0.7rem; opacity:0.8;">7 DÍAS</span>
+            <span style="font-size:1.1rem;">$3.000</span>
+          </a>
+          <a href="/pago/iniciar?dias=15" class="btn-primary" style="flex-direction:column; padding:0.9rem;">
+            <span style="font-size:0.7rem; opacity:0.8;">15 DÍAS</span>
+            <span style="font-size:1.1rem;">$5.000</span>
+          </a>
+          <a href="/pago/iniciar?dias=30" class="btn-primary" style="flex-direction:column; padding:0.9rem; box-shadow:0 0 18px rgba(0,255,157,0.4);">
+            <span style="font-size:0.7rem; opacity:0.8;">⭐ 30 DÍAS</span>
+            <span style="font-size:1.1rem;">$8.000</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <!-- HELP SECTION -->
+  <div class="glass-card fade-in-up" style="margin-top:1.5rem;transition-delay:0.2s;">
+    <div class="card-label"><i class="bi bi-question-circle-fill"></i> Guía de conexión rápida</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:0.5rem;">
+      <div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:1rem;">
+        <div style="color:var(--green);font-weight:700;margin-bottom:0.4rem;font-size:0.9rem;"><i class="bi bi-android2"></i> Android</div>
+        <p style="font-size:0.82rem;color:var(--text-muted);line-height:1.5;">Usá <strong style="color:var(--text)">HTTP Injector</strong> o <strong style="color:var(--text)">NapsternetV</strong> con las credenciales de arriba.</p>
+      </div>
+      <div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:1rem;">
+      </div>
+      <div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:1rem;">
+      </div>
+    </div>
+  </div>
+
+
+    <!-- TARJETA REFERIDOS -->
+    <div class="renew-card" style="background:linear-gradient(135deg,rgba(0,255,157,0.08),rgba(0,242,255,0.06));border:1px solid rgba(0,255,157,0.3);margin-top:1.5rem;">
+      <div style="flex:1;min-width:240px;">
+        <div class="card-label"><i class="bi bi-gift"></i> Programa de Referidos</div>
+        <div style="font-size:1.15rem;font-weight:700;margin-bottom:0.3rem;">Invitá amigos y ganá días gratis 🎁</div>
+        <div style="color:var(--text-muted);font-size:0.9rem;">Compartí tu link. Cuando alguien compra su primer plan, sumás días a tu cuenta automáticamente.</div>
+      </div>
+      <a href="/afiliados" class="btn-primary"><i class="bi bi-people-fill"></i> Ver mi link</a>
+    </div>
+
+</main>
+
+<!-- COPY TOAST -->
+<div class="copy-toast" id="copy-toast">
+  <i class="bi bi-check-circle-fill"></i> Copiado al portapapeles
+</div>
+
+<footer>
+  <p class="footer-copy">© 2026 ConnectVPN — <a href="/privacidad" style="color:var(--text-muted);text-decoration:none;">Privacidad</a> · <a href="/planes" style="color:var(--text-muted);text-decoration:none;">Planes</a></p>
+</footer>
+
+<script>
+  // Particles
+  (function(){const c=document.getElementById('particles-canvas'),ctx=c.getContext('2d');let W,H,p=[];function r(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}function P(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.3;this.vy=(Math.random()-.5)*.3;this.r=Math.random()*1.2+.4;this.color=Math.random()>.5?'#00ff9d':'#00f2ff';this.alpha=Math.random()*.3+.08;}function init(){r();p=[];const n=Math.floor(W*H/16000);for(let i=0;i<n;i++)p.push(new P());}function draw(){ctx.clearRect(0,0,W,H);p.forEach(pt=>{pt.x+=pt.vx;pt.y+=pt.vy;if(pt.x<0)pt.x=W;if(pt.x>W)pt.x=0;if(pt.y<0)pt.y=H;if(pt.y>H)pt.y=0;ctx.beginPath();ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);ctx.fillStyle=pt.color;ctx.globalAlpha=pt.alpha;ctx.fill();});ctx.globalAlpha=1;requestAnimationFrame(draw);}window.addEventListener('resize',init);init();draw();})();
+
+  // Scroll animations
+  const obs = new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:0.1});
+  document.querySelectorAll('.fade-in-up').forEach(el=>obs.observe(el));
+
+  // Progress bar animation
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const fill = document.getElementById('progress-fill');
+      if (fill) fill.style.width = fill.dataset.target;
+    }, 400);
+  });
+
+  // Copy to clipboard
+  function copyText(id, btn) {
+    const el = document.getElementById(id);
+    let text = el.textContent.trim();
+    // If it's the password and it's masked, get real value
+    if (id === 'ssh-pass' && el.dataset.real) {
+      text = el.dataset.real;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
+      showToast();
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '<i class="bi bi-clipboard"></i>';
+      }, 2000);
+    }).catch(() => {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast();
+    });
+  }
+
+  function showToast() {
+    const toast = document.getElementById('copy-toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // Toggle password visibility
+  function togglePassword(btn) {
+    const passEl = document.getElementById('ssh-pass');
+    const icon = btn.querySelector('i');
+    if (passEl.dataset.real) {
+      if (passEl.textContent.includes('•')) {
+        passEl.textContent = passEl.dataset.real;
+        passEl.style.letterSpacing = '0.05em';
+        icon.className = 'bi bi-eye-slash-fill';
+      } else {
+        passEl.textContent = '••••••••••••';
+        passEl.style.letterSpacing = '0.2em';
+        icon.className = 'bi bi-eye-fill';
+      }
+    }
+  }
+</script>
+
+{% include "_chat_widget.html" %}
+</body>
+</html>

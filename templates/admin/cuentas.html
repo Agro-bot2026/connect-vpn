@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cuentas SSH — Admin ConnectVPN</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--green:#00ff9d;--blue:#00f2ff;--bg:#030608;--glass:rgba(8,13,16,0.7);--text:#e0f0f5;--text-muted:#5a7a85;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;padding:1.5rem;}
+  .navbar{background:var(--glass);border:1px solid rgba(0,255,157,0.2);border-radius:12px;padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+  .brand{font-weight:800;font-size:1.1rem;color:var(--green);display:flex;align-items:center;gap:0.5rem;}
+  .menu{display:flex;gap:0.5rem;flex-wrap:wrap;}
+  .menu a{color:var(--text-muted);text-decoration:none;padding:0.5rem 0.9rem;border-radius:6px;font-family:'Space Mono',monospace;font-size:0.78rem;letter-spacing:0.05em;text-transform:uppercase;transition:all 0.15s;}
+  .menu a:hover,.menu a.active{background:rgba(0,255,157,0.1);color:var(--green);}
+  .menu a.logout{color:#ff6b6b;}
+  h1{font-size:1.6rem;margin-bottom:1.5rem;}
+  .section{background:var(--glass);border:1px solid rgba(0,255,157,0.15);border-radius:12px;padding:1.5rem;overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;min-width:800px;}
+  th{font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);text-align:left;padding:0.6rem 0.5rem;border-bottom:1px solid rgba(255,255,255,0.06);}
+  td{padding:0.7rem 0.5rem;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.88rem;}
+  .badge{display:inline-block;padding:0.2rem 0.6rem;border-radius:4px;font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.05em;}
+  .badge.success{background:rgba(0,255,157,0.15);color:var(--green);}
+  .badge.warning{background:rgba(255,180,0,0.15);color:#ffb400;}
+  .badge.error{background:rgba(255,80,80,0.15);color:#ff6b6b;}
+  .empty{text-align:center;color:var(--text-muted);padding:2rem;font-style:italic;}
+  .count{color:var(--text-muted);font-family:'Space Mono',monospace;font-size:0.8rem;}
+  code{color:var(--blue);}
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="brand"><i class="bi bi-shield-lock-fill"></i> Admin ConnectVPN</div>
+    <div class="menu">
+      <a href="/admin">Dashboard</a>
+      <a href="/admin/clientes">Clientes</a>
+      <a href="/admin/pagos">Pagos</a>
+      <a href="/admin/cuentas" class="active">Cuentas SSH</a>
+      <a href="/admin/crear-cuenta">+ Crear</a>
+      <a href="/admin/logout" class="logout">Salir</a>
+    </div>
+  </nav>
+
+  <h1>🔐 Cuentas SSH <span class="count">({{ cuentas|length }})</span></h1>
+
+  <div class="section">
+    {% if cuentas %}
+    <table>
+      <tr><th>ID</th><th>Usuario SSH</th><th>Cliente</th><th>Servidor</th><th>Plan</th><th>Vence</th><th>Días</th><th>Estado</th></tr>
+      {% for c in cuentas %}
+      <tr>
+        <td>#{{ c.id }}</td>
+        <td><code>{{ c.usuario_ssh }}</code></td>
+        <td>{{ c.email }}</td>
+        <td><code style="color:var(--text-muted);">{{ c.ip }}:{{ c.puerto }}</code></td>
+        <td>{{ c.dias }}d</td>
+        <td>{{ c.expira_at[:16] }}</td>
+        <td>
+          {% if c.vencida %}<span class="badge error">Vencida</span>
+          {% elif c.dias_restantes <= 3 %}<span class="badge warning">{{ c.dias_restantes }}d</span>
+          {% else %}<span class="badge success">{{ c.dias_restantes }}d</span>{% endif %}
+        </td>
+        <td>
+          {% if c.activa and not c.vencida %}<span class="badge success">✓ Activa</span>
+          {% else %}<span class="badge error">Inactiva</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <div class="empty">No hay cuentas SSH creadas</div>
+    {% endif %}
+  </div>
+</body>
+</html>

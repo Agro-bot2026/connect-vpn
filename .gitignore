@@ -1,0 +1,27 @@
+# Credenciales y secretos
+.env
+*.key
+
+# Base de datos (datos reales de usuarios/ventas)
+*.db
+*.db.bak*
+connectvpn.db*
+
+# Backups viejos de desarrollo
+*.bak_*
+main.py.bak*
+*_VIEJO*
+backups/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Scripts sueltos de desarrollo/migración
+migrar_*.py
+nueva_funcion_*.py
+
+# Logs
+*.log

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crear Cuenta — Admin ConnectVPN</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--green:#00ff9d;--blue:#00f2ff;--bg:#030608;--glass:rgba(8,13,16,0.7);--text:#e0f0f5;--text-muted:#5a7a85;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;padding:1.5rem;}
+  .navbar{background:var(--glass);border:1px solid rgba(0,255,157,0.2);border-radius:12px;padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+  .brand{font-weight:800;font-size:1.1rem;color:var(--green);display:flex;align-items:center;gap:0.5rem;}
+  .menu{display:flex;gap:0.5rem;flex-wrap:wrap;}
+  .menu a{color:var(--text-muted);text-decoration:none;padding:0.5rem 0.9rem;border-radius:6px;font-family:'Space Mono',monospace;font-size:0.78rem;letter-spacing:0.05em;text-transform:uppercase;transition:all 0.15s;}
+  .menu a:hover,.menu a.active{background:rgba(0,255,157,0.1);color:var(--green);}
+  .menu a.logout{color:#ff6b6b;}
+  h1{font-size:1.6rem;margin-bottom:1.5rem;}
+  .form-card{background:var(--glass);border:1px solid rgba(0,255,157,0.2);border-radius:12px;padding:2rem;max-width:600px;position:relative;overflow:hidden;}
+  .form-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--blue));}
+  .form-group{margin-bottom:1.2rem;}
+  label{display:block;font-family:'Space Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;}
+  input,select{width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:0.85rem 1rem;color:var(--text);font-family:'Space Mono',monospace;font-size:0.95rem;}
+  input:focus,select:focus{outline:none;border-color:var(--green);}
+  .btn{background:linear-gradient(90deg,var(--green),var(--blue));color:#030608;border:none;padding:0.9rem 1.6rem;border-radius:8px;font-family:'Space Mono',monospace;font-weight:700;font-size:0.85rem;letter-spacing:0.06em;cursor:pointer;transition:transform 0.15s;}
+  .btn:hover{transform:scale(1.02);}
+  .msg{padding:1rem;border-radius:8px;margin-bottom:1.5rem;font-size:0.9rem;}
+  .msg.success{background:rgba(0,255,157,0.1);border:1px solid var(--green);color:var(--green);}
+  .msg.error{background:rgba(255,80,80,0.1);border:1px solid #ff6b6b;color:#ff6b6b;}
+  .help{color:var(--text-muted);font-size:0.8rem;margin-top:0.3rem;}
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="brand"><i class="bi bi-shield-lock-fill"></i> Admin ConnectVPN</div>
+    <div class="menu">
+      <a href="/admin">Dashboard</a>
+      <a href="/admin/clientes">Clientes</a>
+      <a href="/admin/pagos">Pagos</a>
+      <a href="/admin/cuentas">Cuentas SSH</a>
+      <a href="/admin/crear-cuenta" class="active">+ Crear</a>
+      <a href="/admin/logout" class="logout">Salir</a>
+    </div>
+  </nav>
+
+  <h1>➕ Crear cuenta manual</h1>
+
+  {% if msg %}<div class="msg success"><i class="bi bi-check-circle"></i> {{ msg }}</div>{% endif %}
+  {% if error %}<div class="msg error"><i class="bi bi-exclamation-triangle"></i> {{ error }}</div>{% endif %}
+
+  <div class="form-card">
+    <p style="margin-bottom:1.5rem;color:var(--text-muted);font-size:0.9rem;">
+      <i class="bi bi-info-circle"></i> Útil cuando un cliente paga por transferencia directa o efectivo en mano y necesitás crearle la cuenta manualmente.
+    </p>
+    <form method="POST" action="/admin/crear-cuenta">
+      <div class="form-group">
+        <label>Email del cliente *</label>
+        <input type="email" name="email" required placeholder="ejemplo@gmail.com">
+        <div class="help">El cliente ya tiene que estar registrado en la web</div>
+      </div>
+      <div class="form-group">
+        <label>Días del plan</label>
+        <select name="dias">
+          <option value="3">3 días — $1.500</option>
+          <option value="7">7 días — $3.000</option>
+          <option value="15">15 días — $5.000</option>
+          <option value="30" selected>30 días — $8.000</option>
+          <option value="60">60 días (especial)</option>
+          <option value="90">90 días (especial)</option>
+        </select>
+      </div>
+      <button type="submit" class="btn"><i class="bi bi-plus-circle"></i> Crear cuenta SSH</button>
+    </form>
+  </div>
+</body>
+</html>

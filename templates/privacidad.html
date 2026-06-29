@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidad — ConnectVPN</title>
+  <meta name="description" content="Política de privacidad y términos de uso de ConnectVPN." />
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W19ML4HVY"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5W19ML4HVY');</script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4478373683231277" crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    /* ConnectVPN — Privacidad — Cyberpunk Terminal */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #030608; --bg2: #060d12;
+      --green: #00ff9d; --blue: #00f2ff;
+      --green-dim: rgba(0,255,157,0.15); --blue-dim: rgba(0,242,255,0.12);
+      --text: #dde6ee; --text-muted: #6b7f8f;
+      --glass: rgba(255,255,255,0.03); --glass-border: rgba(0,255,157,0.18);
+      --font-ui: 'Syne', sans-serif; --font-mono: 'Space Mono', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-ui); min-height: 100vh; overflow-x: hidden; }
+    body::before { content:''; position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px); pointer-events:none; z-index:9999; }
+    #particles-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+    .navbar { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:1rem 2rem; background:rgba(3,6,8,0.92); backdrop-filter:blur(16px); border-bottom:1px solid rgba(0,255,157,0.1); }
+    .navbar-brand { display:flex; align-items:center; gap:0.6rem; text-decoration:none; font-family:var(--font-mono); font-weight:700; font-size:1.2rem; color:var(--green); letter-spacing:0.05em; }
+    .brand-icon { width:34px; height:34px; background:linear-gradient(135deg,var(--green),var(--blue)); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; color:#030608; }
+    .navbar-right { display:flex; align-items:center; gap:1rem; }
+    .navbar-right a { color:var(--text-muted); text-decoration:none; font-size:0.88rem; font-weight:600; transition:color 0.2s; }
+    .navbar-right a:hover { color:var(--green); }
+
+    /* PAGE HEADER */
+    .page-header { position:relative; z-index:1; padding:8rem 2rem 3rem; max-width:900px; margin:0 auto; }
+    .page-tag { display:inline-block; font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--green); margin-bottom:0.8rem; }
+    .page-title { font-size:clamp(1.8rem,3.5vw,2.8rem); font-weight:800; color:#fff; margin-bottom:0.8rem; }
+    .page-meta { font-size:0.85rem; color:var(--text-muted); font-family:var(--font-mono); }
+
+    /* CONTENT */
+    .content { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:0 2rem 5rem; }
+
+    /* TOC */
+    .toc { background:var(--glass); border:1px solid var(--glass-border); border-radius:12px; padding:1.5rem; margin-bottom:3rem; }
+    .toc-title { font-size:0.78rem; font-family:var(--font-mono); letter-spacing:0.12em; text-transform:uppercase; color:var(--green); margin-bottom:1rem; }
+    .toc-list { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
+    .toc-list a { color:var(--text-muted); text-decoration:none; font-size:0.88rem; transition:color 0.2s; display:flex; align-items:center; gap:0.5rem; }
+    .toc-list a::before { content:'//'; font-family:var(--font-mono); color:var(--green); font-size:0.7rem; opacity:0.6; }
+    .toc-list a:hover { color:var(--green); }
+
+    /* SECTIONS */
+    .policy-section { margin-bottom:3rem; scroll-margin-top:6rem; }
+    .section-title { font-size:1.3rem; font-weight:800; color:#fff; margin-bottom:1rem; display:flex; align-items:center; gap:0.7rem; }
+    .section-title i { color:var(--green); font-size:1.1rem; }
+    .section-title .section-num { font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted); background:rgba(0,255,157,0.08); border:1px solid rgba(0,255,157,0.2); border-radius:4px; padding:0.15rem 0.5rem; }
+
+    .policy-text { font-size:0.95rem; color:var(--text-muted); line-height:1.8; margin-bottom:1rem; }
+    .policy-text strong { color:var(--text); }
+    .policy-text a { color:var(--green); text-decoration:none; }
+    .policy-text a:hover { text-decoration:underline; }
+
+    .policy-list { list-style:none; margin-bottom:1rem; }
+    .policy-list li { display:flex; align-items:flex-start; gap:0.7rem; font-size:0.92rem; color:var(--text-muted); padding:0.5rem 0; border-bottom:1px solid rgba(255,255,255,0.04); line-height:1.6; }
+    .policy-list li:last-child { border-bottom:none; }
+    .policy-list li i { color:var(--green); font-size:0.9rem; flex-shrink:0; margin-top:3px; }
+
+    .highlight-box { background:linear-gradient(135deg,rgba(0,255,157,0.05),rgba(0,242,255,0.04)); border:1px solid rgba(0,255,157,0.2); border-radius:10px; padding:1.2rem 1.5rem; margin-bottom:1.5rem; }
+    .highlight-box p { font-size:0.9rem; color:var(--text); line-height:1.7; }
+    .highlight-box strong { color:var(--green); }
+
+    .divider { height:1px; background:rgba(255,255,255,0.06); margin:2.5rem 0; }
+    .neon-divider { height:1px; background:linear-gradient(90deg,transparent,var(--green),var(--blue),transparent); opacity:0.3; margin:0; }
+
+    /* FOOTER */
+    footer { position:relative; z-index:1; background:var(--bg); border-top:1px solid rgba(0,255,157,0.08); padding:2rem; text-align:center; }
+    .footer-links-row { display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; margin-bottom:1rem; }
+    .footer-links-row a { color:var(--text-muted); text-decoration:none; font-size:0.85rem; transition:color 0.2s; }
+    .footer-links-row a:hover { color:var(--green); }
+    .footer-copy { font-size:0.78rem; color:var(--text-muted); font-family:var(--font-mono); }
+
+    @media (max-width:768px) {
+      .page-header { padding:7rem 1.2rem 2rem; }
+      .content { padding:0 1.2rem 3rem; }
+    }
+  </style>
+  {% include "_seo_head.html" %}
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar">
+  <a href="/" class="navbar-brand">
+    <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+    ConnectVPN
+  </a>
+  <div class="navbar-right">
+    <a href="/"><i class="bi bi-arrow-left"></i> Inicio</a>
+    <a href="/login">Ingresar</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <span class="page-tag">// legal</span>
+  <h1 class="page-title">Política de Privacidad</h1>
+  <p class="page-meta">Última actualización: 1 de enero de 2025</p>
+</div>
+
+<div class="neon-divider"></div>
+
+<div class="content">
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">Contenido</div>
+    <ul class="toc-list">
+      <li><a href="#informacion">Información que recopilamos</a></li>
+      <li><a href="#uso">Uso de la información</a></li>
+      <li><a href="#logs">Política de no logs</a></li>
+      <li><a href="#seguridad">Seguridad de datos</a></li>
+      <li><a href="#cookies">Cookies</a></li>
+      <li><a href="#terceros">Servicios de terceros</a></li>
+      <li><a href="#derechos">Tus derechos</a></li>
+      <li><a href="#terminos">Términos de uso</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </div>
+
+  <!-- INTRO -->
+  <div class="highlight-box">
+    <p>En <strong>ConnectVPN</strong> tomamos tu privacidad muy en serio. Esta política describe qué información recopilamos, cómo la usamos y cómo la protegemos. Al usar nuestro servicio, aceptás los términos descritos en este documento.</p>
+  </div>
+
+  <!-- 1. INFORMACIÓN -->
+  <div class="policy-section" id="informacion">
+    <h2 class="section-title">
+      <span class="section-num">01</span>
+      <i class="bi bi-database-fill"></i>
+      Información que recopilamos
+    </h2>
+    <p class="policy-text">Recopilamos únicamente la información mínima necesaria para operar el servicio:</p>
+    <ul class="policy-list">
+      <li><i class="bi bi-check-circle-fill"></i> <strong>Dirección de email:</strong> Para crear y gestionar tu cuenta, enviar credenciales y notificaciones de vencimiento.</li>
+      <li><i class="bi bi-check-circle-fill"></i> <strong>Nombre:</strong> Para personalizar tu experiencia en el dashboard.</li>
+      <li><i class="bi bi-check-circle-fill"></i> <strong>Información de pago:</strong> Procesada por terceros (MercadoPago, etc.). No almacenamos datos de tarjetas.</li>
+      <li><i class="bi bi-check-circle-fill"></i> <strong>Fecha de registro y vencimiento:</strong> Para gestionar el estado de tu suscripción.</li>
+    </ul>
+    <p class="policy-text"><strong>No recopilamos:</strong> historial de navegación, sitios visitados, datos de tráfico, dirección IP de origen ni ninguna actividad de red.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 2. USO -->
+  <div class="policy-section" id="uso">
+    <h2 class="section-title">
+      <span class="section-num">02</span>
+      <i class="bi bi-gear-fill"></i>
+      Uso de la información
+    </h2>
+    <p class="policy-text">La información recopilada se usa exclusivamente para:</p>
+    <ul class="policy-list">
+      <li><i class="bi bi-arrow-right-circle-fill"></i> Crear y gestionar tu cuenta de usuario</li>
+      <li><i class="bi bi-arrow-right-circle-fill"></i> Generar y entregar tus credenciales SSH</li>
+      <li><i class="bi bi-arrow-right-circle-fill"></i> Enviar notificaciones de vencimiento y renovación</li>
+      <li><i class="bi bi-arrow-right-circle-fill"></i> Brindar soporte técnico cuando lo solicitás</li>
+      <li><i class="bi bi-arrow-right-circle-fill"></i> Procesar pagos y emitir comprobantes</li>
+    </ul>
+    <p class="policy-text">Nunca vendemos, alquilamos ni compartimos tu información personal con terceros para fines comerciales.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 3. NO LOGS -->
+  <div class="policy-section" id="logs">
+    <h2 class="section-title">
+      <span class="section-num">03</span>
+      <i class="bi bi-eye-slash-fill"></i>
+      Política estricta de no logs
+    </h2>
+    <div class="highlight-box">
+      <p><strong>ConnectVPN tiene una política de cero registros de actividad.</strong> No monitoreamos, registramos ni almacenamos ningún dato relacionado con tu actividad de navegación.</p>
+    </div>
+    <p class="policy-text">Específicamente, <strong>no registramos</strong>:</p>
+    <ul class="policy-list">
+      <li><i class="bi bi-x-circle-fill" style="color:var(--error)"></i> Sitios web visitados o URLs accedidas</li>
+      <li><i class="bi bi-x-circle-fill" style="color:var(--error)"></i> Contenido de las comunicaciones</li>
+      <li><i class="bi bi-x-circle-fill" style="color:var(--error)"></i> Dirección IP de origen del cliente</li>
+      <li><i class="bi bi-x-circle-fill" style="color:var(--error)"></i> Marcas de tiempo de conexión/desconexión</li>
+      <li><i class="bi bi-x-circle-fill" style="color:var(--error)"></i> Ancho de banda consumido por sesión</li>
+      <li><i class="bi bi-x-circle-fill" style="color:var(--error)"></i> Datos de DNS ni consultas de red</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 4. SEGURIDAD -->
+  <div class="policy-section" id="seguridad">
+    <h2 class="section-title">
+      <span class="section-num">04</span>
+      <i class="bi bi-shield-lock-fill"></i>
+      Seguridad de datos
+    </h2>
+    <p class="policy-text">Implementamos medidas de seguridad técnicas y organizativas para proteger tu información:</p>
+    <ul class="policy-list">
+      <li><i class="bi bi-check-circle-fill"></i> Contraseñas almacenadas con hash bcrypt (nunca en texto plano)</li>
+      <li><i class="bi bi-check-circle-fill"></i> Comunicaciones cifradas con TLS/SSL</li>
+      <li><i class="bi bi-check-circle-fill"></i> Acceso restringido a bases de datos</li>
+      <li><i class="bi bi-check-circle-fill"></i> Servidores con firewall y monitoreo de seguridad</li>
+      <li><i class="bi bi-check-circle-fill"></i> Credenciales SSH generadas con algoritmos criptográficos seguros</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 5. COOKIES -->
+  <div class="policy-section" id="cookies">
+    <h2 class="section-title">
+      <span class="section-num">05</span>
+      <i class="bi bi-browser-chrome"></i>
+      Cookies
+    </h2>
+    <p class="policy-text">Usamos cookies de sesión estrictamente necesarias para mantener tu sesión iniciada. No usamos cookies de rastreo publicitario de terceros.</p>
+    <p class="policy-text">Las cookies de sesión se eliminan automáticamente al cerrar el navegador o al hacer logout.</p>
+    <p class="policy-text">También utilizamos Google Analytics (con IP anonimizada) para medir el tráfico general del sitio, sin identificar usuarios individuales.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 6. TERCEROS -->
+  <div class="policy-section" id="terceros">
+    <h2 class="section-title">
+      <span class="section-num">06</span>
+      <i class="bi bi-link-45deg"></i>
+      Servicios de terceros
+    </h2>
+    <p class="policy-text">Nuestro sitio utiliza los siguientes servicios de terceros:</p>
+    <ul class="policy-list">
+      <li><i class="bi bi-google"></i> <strong>Google Analytics:</strong> Análisis de tráfico web anonimizado.</li>
+      <li><i class="bi bi-google"></i> <strong>Google AdSense:</strong> Publicidad contextual. Google puede usar cookies para mostrar anuncios relevantes.</li>
+      <li><i class="bi bi-credit-card-fill"></i> <strong>Procesadores de pago:</strong> MercadoPago y otros. Tienen sus propias políticas de privacidad.</li>
+    </ul>
+    <p class="policy-text">No tenemos control sobre las prácticas de privacidad de estos terceros. Te recomendamos revisar sus políticas individuales.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 7. DERECHOS -->
+  <div class="policy-section" id="derechos">
+    <h2 class="section-title">
+      <span class="section-num">07</span>
+      <i class="bi bi-person-check-fill"></i>
+      Tus derechos
+    </h2>
+    <p class="policy-text">Tenés derecho a:</p>
+    <ul class="policy-list">
+      <li><i class="bi bi-check-circle-fill"></i> <strong>Acceso:</strong> Solicitar una copia de tus datos personales almacenados.</li>
+      <li><i class="bi bi-check-circle-fill"></i> <strong>Rectificación:</strong> Corregir datos incorrectos o desactualizados.</li>
+      <li><i class="bi bi-check-circle-fill"></i> <strong>Eliminación:</strong> Solicitar la eliminación de tu cuenta y datos asociados.</li>
+      <li><i class="bi bi-check-circle-fill"></i> <strong>Portabilidad:</strong> Recibir tus datos en formato legible por máquina.</li>
+      <li><i class="bi bi-check-circle-fill"></i> <strong>Oposición:</strong> Oponerte al procesamiento de tus datos en determinadas circunstancias.</li>
+    </ul>
+    <p class="policy-text">Para ejercer cualquiera de estos derechos, contactanos por email.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 8. TÉRMINOS -->
+  <div class="policy-section" id="terminos">
+    <h2 class="section-title">
+      <span class="section-num">08</span>
+      <i class="bi bi-file-text-fill"></i>
+      Términos de uso
+    </h2>
+    <p class="policy-text">Al usar ConnectVPN, aceptás los siguientes términos:</p>
+    <ul class="policy-list">
+      <li><i class="bi bi-check-circle-fill"></i> El servicio es para uso personal y legal únicamente.</li>
+      <li><i class="bi bi-check-circle-fill"></i> Queda prohibido usar el servicio para actividades ilegales, spam, ataques informáticos o violación de derechos de terceros.</li>
+      <li><i class="bi bi-check-circle-fill"></i> Las credenciales SSH son personales e intransferibles.</li>
+      <li><i class="bi bi-check-circle-fill"></i> ConnectVPN puede suspender cuentas que violen estos términos sin previo aviso.</li>
+      <li><i class="bi bi-check-circle-fill"></i> El servicio se provee "tal cual" sin garantías de disponibilidad 100%.</li>
+      <li><i class="bi bi-check-circle-fill"></i> Los precios pueden cambiar con 30 días de aviso previo.</li>
+      <li><i class="bi bi-check-circle-fill"></i> No se realizan reembolsos una vez activadas las credenciales.</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 9. CONTACTO -->
+  <div class="policy-section" id="contacto">
+    <h2 class="section-title">
+      <span class="section-num">09</span>
+      <i class="bi bi-envelope-fill"></i>
+      Contacto
+    </h2>
+    <p class="policy-text">Para consultas sobre privacidad, solicitudes de datos o soporte técnico:</p>
+    <div class="highlight-box">
+      <p>
+        <strong>ConnectVPN</strong><br />
+        Email: <a href="mailto:neural@expert-ai.vip">neural@expert-ai.vip</a><br />
+        Tiempo de respuesta: hasta 48 horas hábiles.
+      </p>
+    </div>
+    <p class="policy-text">Esta política puede actualizarse periódicamente. Los cambios significativos serán notificados por email a los usuarios registrados.</p>
+  </div>
+
+</div>
+
+<div class="neon-divider"></div>
+
+<footer>
+  <div class="footer-links-row">
+    <a href="/">Inicio</a>
+    <a href="/planes">Planes</a>
+    <a href="/login">Ingresar</a>
+    <a href="/register">Registrarse</a>
+  </div>
+  <p class="footer-copy">© 2025 ConnectVPN — Todos los derechos reservados</p>
+</footer>
+
+<script>
+  (function(){const c=document.getElementById('particles-canvas'),ctx=c.getContext('2d');let W,H,p=[];function r(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}function P(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.3;this.vy=(Math.random()-.5)*.3;this.r=Math.random()*1.2+.4;this.color=Math.random()>.5?'#00ff9d':'#00f2ff';this.alpha=Math.random()*.25+.06;}function init(){r();p=[];const n=Math.floor(W*H/16000);for(let i=0;i<n;i++)p.push(new P());}function draw(){ctx.clearRect(0,0,W,H);p.forEach(pt=>{pt.x+=pt.vx;pt.y+=pt.vy;if(pt.x<0)pt.x=W;if(pt.x>W)pt.x=0;if(pt.y<0)pt.y=H;if(pt.y>H)pt.y=0;ctx.beginPath();ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);ctx.fillStyle=pt.color;ctx.globalAlpha=pt.alpha;ctx.fill();});ctx.globalAlpha=1;requestAnimationFrame(draw);}window.addEventListener('resize',init);init();draw();})();
+</script>
+</body>
+</html>

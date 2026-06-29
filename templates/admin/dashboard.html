@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard Admin — ConnectVPN</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  :root{--green:#00ff9d;--blue:#00f2ff;--bg:#030608;--glass:rgba(8,13,16,0.7);--text:#e0f0f5;--text-muted:#5a7a85;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;padding:1.5rem;background-image:radial-gradient(circle at 20% 30%,rgba(0,255,157,0.05),transparent 50%);}
+  .navbar{background:var(--glass);border:1px solid rgba(0,255,157,0.2);border-radius:12px;padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+  .brand{font-weight:800;font-size:1.1rem;color:var(--green);display:flex;align-items:center;gap:0.5rem;}
+  .menu{display:flex;gap:0.5rem;flex-wrap:wrap;}
+  .menu a{color:var(--text-muted);text-decoration:none;padding:0.5rem 0.9rem;border-radius:6px;font-family:'Space Mono',monospace;font-size:0.78rem;letter-spacing:0.05em;text-transform:uppercase;transition:all 0.15s;}
+  .menu a:hover,.menu a.active{background:rgba(0,255,157,0.1);color:var(--green);}
+  .menu a.logout{color:#ff6b6b;}
+  h1{font-size:1.6rem;margin-bottom:1.5rem;}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:2rem;}
+  .stat{background:var(--glass);border:1px solid rgba(0,255,157,0.2);border-radius:12px;padding:1.3rem;position:relative;overflow:hidden;}
+  .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--blue));}
+  .stat-label{font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;}
+  .stat-value{font-family:'Space Mono',monospace;font-size:1.8rem;font-weight:700;color:var(--green);}
+  .stat-value.blue{color:var(--blue);}
+  .stat-value.red{color:#ff6b6b;}
+  .section{background:var(--glass);border:1px solid rgba(0,255,157,0.15);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+  .section h2{font-size:1.1rem;margin-bottom:1rem;color:var(--blue);display:flex;align-items:center;gap:0.5rem;}
+  table{width:100%;border-collapse:collapse;}
+  th{font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);text-align:left;padding:0.6rem 0.5rem;border-bottom:1px solid rgba(255,255,255,0.06);}
+  td{padding:0.7rem 0.5rem;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.88rem;}
+  .badge{display:inline-block;padding:0.2rem 0.6rem;border-radius:4px;font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.05em;}
+  .badge.success{background:rgba(0,255,157,0.15);color:var(--green);}
+  .badge.warning{background:rgba(255,180,0,0.15);color:#ffb400;}
+  .empty{text-align:center;color:var(--text-muted);padding:2rem;font-style:italic;}
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="brand"><i class="bi bi-shield-lock-fill"></i> Admin ConnectVPN</div>
+    <div class="menu">
+      <a href="/admin" class="active">Dashboard</a>
+      <a href="/admin/clientes">Clientes</a>
+      <a href="/admin/pagos">Pagos</a>
+      <a href="/admin/cuentas">Cuentas SSH</a>
+      <a href="/admin/crear-cuenta">+ Crear</a>
+      <a href="/admin/logout" class="logout">Salir</a>
+    </div>
+  </nav>
+
+  <h1>📊 Dashboard</h1>
+
+  <div class="stats-grid">
+    <div class="stat"><div class="stat-label">Usuarios totales</div><div class="stat-value">{{ stats.usuarios_total }}</div></div>
+    <div class="stat"><div class="stat-label">Ventas hoy</div><div class="stat-value blue">{{ stats.ventas_hoy }}</div></div>
+    <div class="stat"><div class="stat-label">Ingresos hoy</div><div class="stat-value">${{ "{:,}".format(stats.ingresos_hoy).replace(",", ".") }}</div></div>
+    <div class="stat"><div class="stat-label">Ventas este mes</div><div class="stat-value blue">{{ stats.ventas_mes }}</div></div>
+    <div class="stat"><div class="stat-label">Ingresos mes</div><div class="stat-value">${{ "{:,}".format(stats.ingresos_mes).replace(",", ".") }}</div></div>
+    <div class="stat"><div class="stat-label">Cuentas activas</div><div class="stat-value">{{ stats.cuentas_activas }}</div></div>
+    <div class="stat"><div class="stat-label">Cuentas vencidas</div><div class="stat-value red">{{ stats.cuentas_vencidas }}</div></div>
+    <div class="stat"><div class="stat-label">Ingresos totales</div><div class="stat-value">${{ "{:,}".format(stats.ingresos_total).replace(",", ".") }}</div></div>
+  </div>
+
+  <div class="section">
+    <h2><i class="bi bi-cash-stack"></i> Últimas 5 ventas</h2>
+    {% if ultimas_ventas %}
+    <table>
+      <tr><th>Email</th><th>Monto</th><th>Tipo</th><th>Fecha</th></tr>
+      {% for v in ultimas_ventas %}
+      <tr>
+        <td>{{ v.email }}</td>
+        <td>${{ "{:,}".format(v.monto).replace(",", ".") }}</td>
+        <td><span class="badge success">{{ v.tipo }}</span></td>
+        <td>{{ v.created_at[:16] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <div class="empty">Todavía no hay ventas</div>
+    {% endif %}
+  </div>
+
+  <div class="section">
+    <h2><i class="bi bi-clock-history"></i> Próximas a vencer (3 días)</h2>
+    {% if proximas_vencer %}
+    <table>
+      <tr><th>Usuario SSH</th><th>Cliente</th><th>Vence</th></tr>
+      {% for c in proximas_vencer %}
+      <tr>
+        <td><code>{{ c.usuario_ssh }}</code></td>
+        <td>{{ c.email }}</td>
+        <td><span class="badge warning">{{ c.expira_at[:16] }}</span></td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <div class="empty">Nada por vencer en los próximos 3 días</div>
+    {% endif %}
+  </div>
+</body>
+</html>

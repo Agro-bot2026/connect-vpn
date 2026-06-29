@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verificar Email — ConnectVPN</title>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W19ML4HVY"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5W19ML4HVY');</script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4478373683231277" crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #030608; --green: #00ff9d; --blue: #00f2ff;
+      --green-dim: rgba(0,255,157,0.15); --blue-dim: rgba(0,242,255,0.12);
+      --text: #dde6ee; --text-muted: #6b7f8f;
+      --error: #ff4d6d; --success: #00ff9d;
+      --glass: rgba(255,255,255,0.03); --glass-border: rgba(0,255,157,0.18);
+      --font-ui: 'Syne', sans-serif; --font-mono: 'Space Mono', monospace;
+    }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-ui); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+    body::before { content:''; position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px); pointer-events:none; z-index:9999; }
+    #particles-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+    .navbar { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:1rem 2rem; background:rgba(3,6,8,0.92); backdrop-filter:blur(16px); border-bottom:1px solid rgba(0,255,157,0.1); }
+    .navbar-brand { display:flex; align-items:center; gap:0.6rem; text-decoration:none; font-family:var(--font-mono); font-weight:700; font-size:1.2rem; color:var(--green); letter-spacing:0.05em; }
+    .brand-icon { width:34px; height:34px; background:linear-gradient(135deg,var(--green),var(--blue)); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; color:#030608; }
+
+    .auth-main { flex:1; display:flex; align-items:center; justify-content:center; padding:6rem 1.5rem 3rem; position:relative; z-index:1; }
+
+    .auth-card { background:var(--glass); border:1px solid var(--glass-border); border-radius:16px; backdrop-filter:blur(20px); padding:2.5rem; width:100%; max-width:440px; position:relative; overflow:hidden; animation:slideUp 0.5s ease; }
+    .auth-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--green),var(--blue)); }
+    @keyframes slideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+
+    .auth-icon { width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg,var(--green-dim),var(--blue-dim)); border:1px solid rgba(0,255,157,0.3); display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:var(--green); margin:0 auto 1.5rem; }
+    .auth-title { font-size:1.6rem; font-weight:800; color:#fff; text-align:center; margin-bottom:0.4rem; }
+    .auth-subtitle { font-size:0.88rem; color:var(--text-muted); text-align:center; margin-bottom:0.5rem; line-height:1.5; }
+    .email-display { text-align:center; font-family:var(--font-mono); font-size:0.88rem; color:var(--green); margin-bottom:2rem; }
+
+    .alert { border-radius:8px; padding:0.8rem 1rem; font-size:0.88rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.6rem; }
+    .alert-error { background:rgba(255,77,109,0.1); border:1px solid rgba(255,77,109,0.3); color:var(--error); }
+    .alert-success { background:rgba(0,255,157,0.08); border:1px solid rgba(0,255,157,0.3); color:var(--green); }
+
+    /* OTP Input */
+    .otp-label { display:block; font-size:0.78rem; font-family:var(--font-mono); letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); margin-bottom:1rem; text-align:center; }
+    .otp-group { display:flex; gap:0.6rem; justify-content:center; margin-bottom:0.5rem; }
+    .otp-input { width:52px; height:58px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:var(--text); font-family:var(--font-mono); font-size:1.4rem; font-weight:700; text-align:center; outline:none; transition:border-color 0.2s,box-shadow 0.2s; caret-color:var(--green); }
+    .otp-input:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(0,255,157,0.12),0 0 16px rgba(0,255,157,0.1); }
+    .otp-input.filled { border-color:rgba(0,255,157,0.5); background:rgba(0,255,157,0.06); }
+    .otp-input.error-field { border-color:var(--error); box-shadow:0 0 0 3px rgba(255,77,109,0.1); }
+
+    .field-error { font-size:0.78rem; color:var(--error); margin-top:0.35rem; display:none; text-align:center; }
+    .field-error.show { display:block; }
+
+    .btn-primary { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; background:linear-gradient(90deg,var(--green),var(--blue)); color:#030608; font-family:var(--font-mono); font-weight:700; font-size:0.9rem; letter-spacing:0.06em; padding:0.9rem 2rem; border-radius:8px; text-decoration:none; border:none; cursor:pointer; transition:transform 0.15s,box-shadow 0.2s; width:100%; margin-top:1.5rem; }
+    .btn-primary:hover { transform:scale(1.02); box-shadow:0 0 28px rgba(0,255,157,0.4); }
+    .btn-primary:active { transform:scale(0.97); }
+
+    .resend-section { text-align:center; margin-top:1.5rem; font-size:0.88rem; color:var(--text-muted); }
+    .resend-btn { background:none; border:none; color:var(--blue); font-weight:600; cursor:pointer; font-family:var(--font-ui); font-size:0.88rem; transition:color 0.2s; }
+    .resend-btn:hover { color:var(--green); }
+    .resend-btn:disabled { color:var(--text-muted); cursor:not-allowed; }
+    .countdown { font-family:var(--font-mono); color:var(--text-muted); }
+
+    .spinner { width:18px; height:18px; border:2px solid rgba(3,6,8,0.3); border-top-color:#030608; border-radius:50%; animation:spin 0.7s linear infinite; display:none; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    footer.auth-page-footer { position:relative; z-index:1; background:var(--bg); border-top:1px solid rgba(0,255,157,0.06); padding:1.5rem 2rem; text-align:center; }
+    .footer-copy { font-size:0.78rem; color:var(--text-muted); font-family:var(--font-mono); }
+
+    @media (max-width:480px) { .auth-card { padding:2rem 1.5rem; } .auth-main { padding:5rem 1rem 2rem; } .otp-input { width:44px; height:50px; font-size:1.2rem; } }
+  </style>
+  {% include "_seo_head.html" %}
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar">
+  <a href="/" class="navbar-brand">
+    <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+    ConnectVPN
+  </a>
+</nav>
+
+<main class="auth-main">
+  <div class="auth-card">
+    <div class="auth-icon"><i class="bi bi-envelope-check-fill"></i></div>
+    <h1 class="auth-title">Verificar email</h1>
+    <p class="auth-subtitle">Te enviamos un código de 6 dígitos a:</p>
+    <div class="email-display">{{ user.email if user else 'tu@email.com' }}</div>
+
+    {% if error %}
+    <div class="alert alert-error">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      {{ error }}
+    </div>
+    {% endif %}
+
+    {% if success %}
+    <div class="alert alert-success">
+      <i class="bi bi-check-circle-fill"></i>
+      {{ success }}
+    </div>
+    {% endif %}
+
+    <form id="verify-form" method="POST" action="/verificar" novalidate>
+      <input type="hidden" name="email" value="{{ user.email if user else '' }}" />
+
+      <label class="otp-label">Ingresá el código de verificación</label>
+      <div class="otp-group" id="otp-group">
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="0" />
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="1" />
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="2" />
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="3" />
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="4" />
+        <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="5" />
+      </div>
+      <input type="hidden" name="codigo" id="codigo-hidden" />
+      <div class="field-error" id="otp-error">Ingresá el código completo de 6 dígitos.</div>
+
+      <button type="submit" class="btn-primary" id="submit-btn">
+        <span class="spinner" id="spinner"></span>
+        <i class="bi bi-check-circle-fill" id="btn-icon"></i>
+        <span id="btn-text">Verificar código</span>
+      </button>
+    </form>
+
+    <div class="resend-section">
+      ¿No recibiste el código?
+      <button class="resend-btn" id="resend-btn" onclick="resendCode()" disabled>
+        Reenviar en <span class="countdown" id="countdown">60s</span>
+      </button>
+    </div>
+  </div>
+</main>
+
+<footer class="auth-page-footer">
+  <p class="footer-copy">© 2025 ConnectVPN — <a href="/privacidad" style="color:var(--text-muted);text-decoration:none;">Privacidad</a></p>
+</footer>
+
+<script>
+  // Particles
+  (function(){const c=document.getElementById('particles-canvas'),ctx=c.getContext('2d');let W,H,p=[];function r(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}function P(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.4;this.vy=(Math.random()-.5)*.4;this.r=Math.random()*1.5+.5;this.color=Math.random()>.5?'#00ff9d':'#00f2ff';this.alpha=Math.random()*.4+.1;}function init(){r();p=[];const n=Math.floor(W*H/14000);for(let i=0;i<n;i++)p.push(new P());}function draw(){ctx.clearRect(0,0,W,H);p.forEach(pt=>{pt.x+=pt.vx;pt.y+=pt.vy;if(pt.x<0)pt.x=W;if(pt.x>W)pt.x=0;if(pt.y<0)pt.y=H;if(pt.y>H)pt.y=0;ctx.beginPath();ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);ctx.fillStyle=pt.color;ctx.globalAlpha=pt.alpha;ctx.fill();});ctx.globalAlpha=1;requestAnimationFrame(draw);}window.addEventListener('resize',init);init();draw();})();
+
+  // OTP inputs
+  const otpInputs = document.querySelectorAll('.otp-input');
+  otpInputs.forEach((input, idx) => {
+    input.addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '');
+      if (this.value && idx < otpInputs.length - 1) {
+        otpInputs[idx + 1].focus();
+      }
+      this.classList.toggle('filled', this.value.length > 0);
+      updateHidden();
+    });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !this.value && idx > 0) {
+        otpInputs[idx - 1].focus();
+        otpInputs[idx - 1].value = '';
+        otpInputs[idx - 1].classList.remove('filled');
+        updateHidden();
+      }
+    });
+    input.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+      paste.split('').forEach((ch, i) => {
+        if (otpInputs[i]) { otpInputs[i].value = ch; otpInputs[i].classList.add('filled'); }
+      });
+      if (otpInputs[paste.length]) otpInputs[paste.length].focus();
+      updateHidden();
+    });
+  });
+
+  function updateHidden() {
+    let code = '';
+    otpInputs.forEach(i => code += i.value);
+    document.getElementById('codigo-hidden').value = code;
+  }
+
+  // Form validation
+  document.getElementById('verify-form').addEventListener('submit', function(e) {
+    updateHidden();
+    const code = document.getElementById('codigo-hidden').value;
+    if (code.length < 6) {
+      e.preventDefault();
+      document.getElementById('otp-error').classList.add('show');
+      otpInputs.forEach(i => i.classList.add('error-field'));
+      return;
+    }
+    document.getElementById('otp-error').classList.remove('show');
+    document.getElementById('spinner').style.display = 'block';
+    document.getElementById('btn-icon').style.display = 'none';
+    document.getElementById('btn-text').textContent = 'Verificando...';
+    document.getElementById('submit-btn').disabled = true;
+  });
+
+  // Countdown resend
+  let seconds = 60;
+  const countdownEl = document.getElementById('countdown');
+  const resendBtn = document.getElementById('resend-btn');
+  const timer = setInterval(() => {
+    seconds--;
+    countdownEl.textContent = seconds + 's';
+    if (seconds <= 0) {
+      clearInterval(timer);
+      resendBtn.innerHTML = 'Reenviar código';
+      resendBtn.disabled = false;
+    }
+  }, 1000);
+
+  function resendCode() {
+    resendBtn.disabled = true;
+    resendBtn.innerHTML = 'Enviando...';
+    // POST to /reenviar-codigo — handled by backend
+    fetch('/reenviar-codigo', { method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: document.querySelector('[name="email"]').value }) })
+      .then(() => {
+        resendBtn.innerHTML = 'Código reenviado <i class="bi bi-check-circle-fill" style="color:var(--green)"></i>';
+        setTimeout(() => { resendBtn.innerHTML = 'Reenviar código'; resendBtn.disabled = false; }, 5000);
+      })
+      .catch(() => {
+        resendBtn.innerHTML = 'Error al reenviar';
+        resendBtn.disabled = false;
+      });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ConnectVPN — Conexión Segura para Argentina</title>
+  <meta name="description" content="Servicio VPN/SSH seguro y veloz para Argentina. Protegé tu conexión con ConnectVPN." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W19ML4HVY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-5W19ML4HVY');
+  </script>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4478373683231277" crossorigin="anonymous"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    /* ============================================================
+       ConnectVPN — Design: Cyberpunk Terminal
+       Colors: bg #030608 | neon-green #00ff9d | neon-blue #00f2ff
+       Fonts: Syne (UI/titles) + Space Mono (data/code)
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #030608;
+      --bg2: #060d12;
+      --bg3: #0a1520;
+      --green: #00ff9d;
+      --blue: #00f2ff;
+      --green-dim: rgba(0,255,157,0.15);
+      --blue-dim: rgba(0,242,255,0.12);
+      --text: #dde6ee;
+      --text-muted: #6b7f8f;
+      --error: #ff4d6d;
+      --success: #00ff9d;
+      --glass: rgba(255,255,255,0.03);
+      --glass-border: rgba(0,255,157,0.18);
+      --radius: 12px;
+      --font-ui: 'Syne', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Scanlines overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Canvas particles */
+    #particles-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ---- NAVBAR ---- */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(3,6,8,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0,255,157,0.1);
+      transition: background 0.3s;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--green);
+      letter-spacing: 0.05em;
+    }
+
+    .navbar-brand .brand-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      color: #030608;
+    }
+
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .navbar-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+    }
+
+    .navbar-links a:hover { color: var(--green); }
+
+    .btn-nav {
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      color: #030608 !important;
+      padding: 0.45rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      transition: transform 0.15s, box-shadow 0.15s !important;
+    }
+
+    .btn-nav:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 18px rgba(0,255,157,0.4);
+    }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--green);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* ---- HERO ---- */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 3rem;
+      padding: 7rem 4rem 4rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .hero-content { max-width: 600px; }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--green-dim);
+      border: 1px solid rgba(0,255,157,0.3);
+      color: var(--green);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.9rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+      color: #fff;
+    }
+
+    .hero-title .highlight-green { color: var(--green); }
+    .hero-title .highlight-blue { color: var(--blue); }
+
+    .typewriter-wrap {
+      display: inline-block;
+      position: relative;
+    }
+
+    .typewriter-text {
+      border-right: 3px solid var(--green);
+      padding-right: 4px;
+      animation: blink-cursor 0.75s step-end infinite;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    @keyframes blink-cursor {
+      from, to { border-color: transparent; }
+      50% { border-color: var(--green); }
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      max-width: 480px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      color: #030608;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 28px rgba(0,255,157,0.45), 0 0 60px rgba(0,242,255,0.2);
+    }
+
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--blue);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      border: 1px solid rgba(0,242,255,0.4);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-outline:hover {
+      background: rgba(0,242,255,0.08);
+      border-color: var(--blue);
+      box-shadow: 0 0 18px rgba(0,242,255,0.25);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item { text-align: left; }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.1rem;
+    }
+
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .hero-visual img {
+      width: 100%;
+      max-width: 480px;
+      filter: drop-shadow(0 0 40px rgba(0,255,157,0.3)) drop-shadow(0 0 80px rgba(0,242,255,0.15));
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+    }
+
+    /* ---- SECTION COMMONS ---- */
+    section { position: relative; z-index: 1; }
+
+    .section-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .section-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    /* ---- GLASS CARD ---- */
+    .glass-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(12px);
+      padding: 2rem;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(0,255,157,0.4);
+      box-shadow: 0 0 30px rgba(0,255,157,0.08), 0 8px 32px rgba(0,0,0,0.4);
+      transform: translateY(-4px);
+    }
+
+    /* ---- HOW IT WORKS ---- */
+    .how-section { background: var(--bg2); }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      position: relative;
+    }
+
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 3rem;
+      left: calc(16.66% + 1rem);
+      right: calc(16.66% + 1rem);
+      height: 1px;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      opacity: 0.3;
+    }
+
+    .step-card {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .step-number {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-dim), var(--blue-dim));
+      border: 1px solid rgba(0,255,157,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.2rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--green);
+    }
+
+    .step-icon {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .step-icon.green { color: var(--green); }
+    .step-icon.blue { color: var(--blue); }
+
+    .step-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.6rem;
+    }
+
+    .step-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ---- PLANS ---- */
+    .plan-card {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 2.5rem;
+      border: 1px solid rgba(0,255,157,0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plan-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+    }
+
+    .plan-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      color: #030608;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.8rem;
+      border-radius: 4px;
+      margin-bottom: 1.2rem;
+    }
+
+    .plan-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .plan-price {
+      font-family: var(--font-mono);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .plan-price span {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .plan-period {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.8rem;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+
+    .plan-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.92rem;
+      color: var(--text);
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .plan-features li:last-child { border-bottom: none; }
+
+    .plan-features li i {
+      color: var(--green);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ---- FEATURES ---- */
+    .features-section { background: var(--bg2); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      padding: 2rem;
+    }
+
+    .feature-icon-wrap {
+      width: 52px; height: 52px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .feature-icon-wrap.green {
+      background: var(--green-dim);
+      border: 1px solid rgba(0,255,157,0.25);
+      color: var(--green);
+    }
+
+    .feature-icon-wrap.blue {
+      background: var(--blue-dim);
+      border: 1px solid rgba(0,242,255,0.25);
+      color: var(--blue);
+    }
+
+    .feature-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ---- CTA SECTION ---- */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(0,255,157,0.05) 0%, rgba(0,242,255,0.05) 100%);
+      border-top: 1px solid rgba(0,255,157,0.1);
+      border-bottom: 1px solid rgba(0,242,255,0.1);
+    }
+
+    .cta-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+      text-align: center;
+    }
+
+    .cta-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+
+    .cta-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      position: relative;
+      z-index: 1;
+      background: var(--bg);
+      border-top: 1px solid rgba(0,255,157,0.08);
+      padding: 3rem 2rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-brand-name {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-brand-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    .footer-col-title {
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--green); }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* ---- MOBILE ---- */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 6rem 1.5rem 3rem;
+        text-align: center;
+      }
+      .hero-content { max-width: 100%; }
+      .hero-actions { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-visual { order: -1; }
+      .hero-visual img { max-width: 280px; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .steps-grid::before { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .navbar-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(3,6,8,0.97); padding: 1.5rem; gap: 1rem; border-bottom: 1px solid rgba(0,255,157,0.15); }
+      .navbar-links.open { display: flex; }
+      .hamburger { display: block; }
+      .navbar { padding: 1rem 1.5rem; position: relative; }
+    }
+
+    @media (max-width: 600px) {
+      .section-inner { padding: 3.5rem 1.2rem; }
+      .hero { padding: 5rem 1.2rem 3rem; }
+    }
+
+    /* ---- ANIMATIONS ---- */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Glitch effect on hero title */
+    .glitch {
+      position: relative;
+    }
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .glitch::before {
+      color: var(--blue);
+      animation: glitch-1 4s infinite;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    }
+    .glitch::after {
+      color: var(--green);
+      animation: glitch-2 4s infinite;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    }
+    @keyframes glitch-1 {
+      0%, 90%, 100% { transform: translate(0); opacity: 0; }
+      92% { transform: translate(-3px, 1px); opacity: 0.7; }
+      94% { transform: translate(3px, -1px); opacity: 0.7; }
+      96% { transform: translate(0); opacity: 0; }
+    }
+    @keyframes glitch-2 {
+      0%, 90%, 100% { transform: translate(0); opacity: 0; }
+      93% { transform: translate(3px, 2px); opacity: 0.6; }
+      95% { transform: translate(-3px, -2px); opacity: 0.6; }
+      97% { transform: translate(0); opacity: 0; }
+    }
+
+    /* Neon divider */
+    .neon-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green), var(--blue), transparent);
+      margin: 0;
+      opacity: 0.4;
+    }
+  </style>
+  {% include "_seo_head.html" %}
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="/" class="navbar-brand">
+    <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+    ConnectVPN
+  </a>
+  <button class="hamburger" id="hamburger" aria-label="Menú">
+    <i class="bi bi-list"></i>
+  </button>
+  <ul class="navbar-links" id="nav-links">
+    <li><a href="#como-funciona">Cómo funciona</a></li>
+    <li><a href="#planes">Planes</a></li>
+    <li><a href="#caracteristicas">Características</a></li>
+    <li><a href="/privacidad">Privacidad</a></li>
+    <li><a href="/login">Ingresar</a></li>
+    <li><a href="/register" class="btn-nav">Registrarse</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero-section">
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">
+        <i class="bi bi-shield-check"></i>
+        Conexión cifrada · SSH/VPN
+      </div>
+      <h1 class="hero-title">
+        <span class="glitch" data-text="Conexión">Conexión</span><br />
+        <span class="highlight-green">segura</span> para<br />
+        <span class="typewriter-wrap">
+          <span class="typewriter-text" id="typewriter">Argentina</span>
+        </span>
+      </h1>
+      <p class="hero-subtitle">
+        Protegé tu privacidad online con nuestro servicio VPN/SSH de alta velocidad. Activación instantánea, sin logs, sin complicaciones.
+      </p>
+      <div class="hero-actions">
+        <a href="/register" class="btn-primary">
+          <i class="bi bi-lightning-charge-fill"></i>
+          Empezar ahora
+        </a>
+        <a href="#planes" class="btn-outline">
+          <i class="bi bi-tag"></i>
+          Ver planes
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-value">99.9%</div>
+          <div class="stat-label">Uptime</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">256bit</div>
+          <div class="stat-label">Cifrado</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">24/7</div>
+          <div class="stat-label">Soporte</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663689840665/YWZ57MybfNY6VkmxM2LtRJ/hero_shield-8Nv9PWDAn9CBU5eiypGUYF.webp" alt="ConnectVPN Shield" loading="eager" />
+    </div>
+  </div>
+</section>
+
+<div class="neon-divider"></div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="como-funciona">
+  <div class="section-inner">
+    <span class="section-tag">// proceso</span>
+    <h2 class="section-title fade-in-up">¿Cómo funciona?</h2>
+    <p class="section-subtitle fade-in-up">Tres pasos simples para tener tu conexión segura activa en minutos.</p>
+
+    <div class="steps-grid">
+      <div class="glass-card step-card fade-in-up">
+        <div class="step-number">01</div>
+        <i class="bi bi-person-plus-fill step-icon green"></i>
+        <div class="step-title">Registrarse</div>
+        <p class="step-desc">Creá tu cuenta con tu email. Verificamos tu identidad con un código de confirmación.</p>
+      </div>
+      <div class="glass-card step-card fade-in-up" style="transition-delay:0.1s">
+        <div class="step-number">02</div>
+        <i class="bi bi-credit-card-fill step-icon blue"></i>
+        <div class="step-title">Pagar</div>
+        <p class="step-desc">Elegí entre planes desde $1.500 ARS (3 días) hasta $8.000 ARS (30 días). Pagos seguros con múltiples métodos.</p>
+      </div>
+      <div class="glass-card step-card fade-in-up" style="transition-delay:0.2s">
+        <div class="step-number">03</div>
+        <i class="bi bi-terminal-fill step-icon green"></i>
+        <div class="step-title">Recibir credenciales</div>
+        <p class="step-desc">Accedé a tu dashboard y obtené usuario, contraseña, IP y puerto SSH al instante.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="neon-divider"></div>
+
+<!-- PLANS -->
+<section id="planes">
+  <div class="section-inner" style="text-align:center;">
+    <span class="section-tag">// planes</span>
+    <h2 class="section-title fade-in-up">Simple y transparente</h2>
+    <p class="section-subtitle fade-in-up" style="margin:0 auto 3rem;">Sin contratos, sin sorpresas. Un plan claro con todo lo que necesitás.</p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.5rem; max-width:1200px; margin:0 auto;">
+
+      <!-- 3 días -->
+      <div class="glass-card plan-card fade-in-up" style="padding:1.8rem 1.3rem;">
+        <div class="plan-badge">Prueba</div>
+        <div class="plan-name">3 Días</div>
+        <div class="plan-price">$1.500 <span>ARS</span></div>
+        <div class="plan-period">por 3 días</div>
+        <ul class="plan-features">
+          <li><i class="bi bi-check-circle-fill"></i> Acceso SSH completo</li>
+          <li><i class="bi bi-check-circle-fill"></i> Sin límite de datos</li>
+          <li><i class="bi bi-check-circle-fill"></i> Activación instantánea</li>
+          <li><i class="bi bi-check-circle-fill"></i> Ideal para probar</li>
+        </ul>
+        <a href="/planes" class="btn-primary" style="width:100%; justify-content:center;">
+          <i class="bi bi-lightning-charge-fill"></i> Elegir
+        </a>
+      </div>
+
+      <!-- 7 días -->
+      <div class="glass-card plan-card fade-in-up" style="padding:1.8rem 1.3rem;">
+        <div class="plan-badge">Semanal</div>
+        <div class="plan-name">7 Días</div>
+        <div class="plan-price">$3.000 <span>ARS</span></div>
+        <div class="plan-period">por 7 días</div>
+        <ul class="plan-features">
+          <li><i class="bi bi-check-circle-fill"></i> Acceso SSH completo</li>
+          <li><i class="bi bi-check-circle-fill"></i> Sin límite de datos</li>
+          <li><i class="bi bi-check-circle-fill"></i> Activación instantánea</li>
+          <li><i class="bi bi-check-circle-fill"></i> Soporte por email</li>
+        </ul>
+        <a href="/planes" class="btn-primary" style="width:100%; justify-content:center;">
+          <i class="bi bi-lightning-charge-fill"></i> Elegir
+        </a>
+      </div>
+
+      <!-- 15 días -->
+      <div class="glass-card plan-card fade-in-up" style="padding:1.8rem 1.3rem;">
+        <div class="plan-badge">Quincenal</div>
+        <div class="plan-name">15 Días</div>
+        <div class="plan-price">$5.000 <span>ARS</span></div>
+        <div class="plan-period">por 15 días</div>
+        <ul class="plan-features">
+          <li><i class="bi bi-check-circle-fill"></i> Acceso SSH completo</li>
+          <li><i class="bi bi-check-circle-fill"></i> Sin límite de datos</li>
+          <li><i class="bi bi-check-circle-fill"></i> Activación instantánea</li>
+          <li><i class="bi bi-check-circle-fill"></i> Soporte 24/7</li>
+        </ul>
+        <a href="/planes" class="btn-primary" style="width:100%; justify-content:center;">
+          <i class="bi bi-lightning-charge-fill"></i> Elegir
+        </a>
+      </div>
+
+      <!-- 30 días (Más popular) -->
+      <div class="glass-card plan-card fade-in-up" style="padding:1.8rem 1.3rem; border:2px solid var(--green); box-shadow:0 0 30px rgba(0,255,157,0.25);">
+        <div class="plan-badge">⭐ Más popular</div>
+        <div class="plan-name">30 Días</div>
+        <div class="plan-price">$8.000 <span>ARS</span></div>
+        <div class="plan-period">mejor precio/día</div>
+        <ul class="plan-features">
+          <li><i class="bi bi-check-circle-fill"></i> Acceso SSH completo</li>
+          <li><i class="bi bi-check-circle-fill"></i> Cifrado AES-256</li>
+          <li><i class="bi bi-check-circle-fill"></i> Sin límite de datos</li>
+          <li><i class="bi bi-check-circle-fill"></i> Soporte 24/7</li>
+          <li><i class="bi bi-check-circle-fill"></i> Sin logs</li>
+        </ul>
+        <a href="/planes" class="btn-primary" style="width:100%; justify-content:center;">
+          <i class="bi bi-lightning-charge-fill"></i> Elegir
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="neon-divider"></div>
+
+<!-- FEATURES -->
+<section class="features-section" id="caracteristicas">
+  <div class="section-inner">
+    <span class="section-tag">// características</span>
+    <h2 class="section-title fade-in-up">Por qué elegir ConnectVPN</h2>
+    <p class="section-subtitle fade-in-up">Tecnología de punta al servicio de tu privacidad y seguridad online.</p>
+
+    <div class="features-grid">
+      <div class="glass-card feature-card fade-in-up">
+        <div class="feature-icon-wrap green"><i class="bi bi-speedometer2"></i></div>
+        <div class="feature-title">Alta velocidad</div>
+        <p class="feature-desc">Servidores optimizados para máxima velocidad. Streaming, gaming y navegación sin lag.</p>
+      </div>
+      <div class="glass-card feature-card fade-in-up" style="transition-delay:0.08s">
+        <div class="feature-icon-wrap blue"><i class="bi bi-shield-lock-fill"></i></div>
+        <div class="feature-title">Cifrado militar</div>
+        <p class="feature-desc">Protocolo SSH con cifrado AES-256. Tu tráfico es completamente ilegible para terceros.</p>
+      </div>
+      <div class="glass-card feature-card fade-in-up" style="transition-delay:0.16s">
+        <div class="feature-icon-wrap green"><i class="bi bi-headset"></i></div>
+        <div class="feature-title">Soporte 24/7</div>
+        <p class="feature-desc">Nuestro equipo está disponible las 24 horas para resolver cualquier inconveniente.</p>
+      </div>
+      <div class="glass-card feature-card fade-in-up" style="transition-delay:0.24s">
+        <div class="feature-icon-wrap blue"><i class="bi bi-eye-slash-fill"></i></div>
+        <div class="feature-title">Sin logs</div>
+        <p class="feature-desc">Política estricta de no registros. Tu actividad online es completamente privada.</p>
+      </div>
+      <div class="glass-card feature-card fade-in-up" style="transition-delay:0.32s">
+        <div class="feature-icon-wrap green"><i class="bi bi-lightning-charge-fill"></i></div>
+        <div class="feature-title">Activación instantánea</div>
+        <p class="feature-desc">Recibís tus credenciales SSH en segundos después de confirmar el pago.</p>
+      </div>
+      <div class="glass-card feature-card fade-in-up" style="transition-delay:0.40s">
+        <div class="feature-icon-wrap blue"><i class="bi bi-phone-fill"></i></div>
+        <div class="feature-title">Multi-dispositivo</div>
+        <p class="feature-desc">Compatible con Android, iOS, Windows, Linux y macOS. Conectate desde donde quieras.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="neon-divider"></div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2 class="cta-title fade-in-up">Protegé tu conexión <span style="color:var(--green)">hoy mismo</span></h2>
+    <p class="cta-subtitle fade-in-up">Más de 1.000 usuarios en Argentina ya navegan de forma segura con ConnectVPN.</p>
+    <div class="fade-in-up" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <a href="/register" class="btn-primary">
+        <i class="bi bi-person-plus-fill"></i>
+        Crear cuenta gratis
+      </a>
+      <a href="/login" class="btn-outline">
+        <i class="bi bi-box-arrow-in-right"></i>
+        Ya tengo cuenta
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-name">ConnectVPN</div>
+      <p class="footer-brand-desc">Servicio VPN/SSH seguro y confiable para usuarios en Argentina. Privacidad garantizada.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navegación</div>
+      <ul class="footer-links">
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/planes">Planes</a></li>
+        <li><a href="/login">Ingresar</a></li>
+        <li><a href="/register">Registrarse</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <ul class="footer-links">
+        <li><a href="/privacidad">Política de privacidad</a></li>
+        <li><a href="/privacidad#terminos">Términos de uso</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 ConnectVPN — Todos los derechos reservados</span>
+    <span class="footer-copy" style="color:var(--green);">// conexión segura</span>
+  </div>
+</footer>
+
+<script>
+  // ---- Particles ----
+  (function() {
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function Particle() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = (Math.random() - 0.5) * 0.4;
+      this.r = Math.random() * 1.5 + 0.5;
+      this.color = Math.random() > 0.5 ? '#00ff9d' : '#00f2ff';
+      this.alpha = Math.random() * 0.4 + 0.1;
+    }
+
+    function init() {
+      resize();
+      particles = [];
+      const count = Math.floor((W * H) / 12000);
+      for (let i = 0; i < count; i++) particles.push(new Particle());
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = W;
+        if (p.x > W) p.x = 0;
+        if (p.y < 0) p.y = H;
+        if (p.y > H) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = '#00ff9d';
+            ctx.globalAlpha = (1 - dist / 120) * 0.08;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', init);
+    init();
+    draw();
+  })();
+
+  // ---- Typewriter ----
+  (function() {
+    const words = ['Argentina', 'tu hogar', 'cualquier red', 'todos'];
+    let wi = 0, ci = 0, deleting = false;
+    const el = document.getElementById('typewriter');
+    if (!el) return;
+
+    function tick() {
+      const word = words[wi];
+      if (!deleting) {
+        el.textContent = word.slice(0, ++ci);
+        if (ci === word.length) { deleting = true; setTimeout(tick, 1800); return; }
+      } else {
+        el.textContent = word.slice(0, --ci);
+        if (ci === 0) { deleting = false; wi = (wi + 1) % words.length; }
+      }
+      setTimeout(tick, deleting ? 60 : 100);
+    }
+    setTimeout(tick, 800);
+  })();
+
+  // ---- Scroll animations ----
+  (function() {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.fade-in-up').forEach(el => obs.observe(el));
+  })();
+
+  // ---- Hamburger ----
+  document.getElementById('hamburger').addEventListener('click', function() {
+    document.getElementById('nav-links').classList.toggle('open');
+  });
+
+  // ---- Navbar scroll ----
+  window.addEventListener('scroll', function() {
+    const nb = document.getElementById('navbar');
+    nb.style.background = window.scrollY > 50
+      ? 'rgba(3,6,8,0.97)'
+      : 'rgba(3,6,8,0.85)';
+  });
+</script>
+</body>
+</html>
