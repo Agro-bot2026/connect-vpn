@@ -1,0 +1,9 @@
+fastapi==0.136.1
+uvicorn==0.47.0
+python-dotenv==1.2.2
+mercadopago==3.1.1
+openai==2.38.0
+requests==2.34.2
+Jinja2==3.1.2
+pydantic==2.13.4
+starlette==1.1.0
